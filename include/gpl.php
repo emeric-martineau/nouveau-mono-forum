@@ -1,149 +1,24 @@
-<?php
-/*******************************************************************************
- * Copyright (C) 2001-2004 MARTINEAU Emeric (php4php@free.fr)
- *
- * Nouvelle foire aux question.
- *
- * Version 1.2.1
- *
- * Voici un forum qui ne tient que sur un seul fichier. Ultra rapide, simple a 
- * mettre en place. Les urls sont cliquables, la personne qui pose une question
- * peut recevoir directement un mel pour chaque reponse. Les message sont
- * nettoyer tous les X jours. Vous avez besoin d'une base Mysql. On peut déposer
- * du code php sans risque.
- *
- * Script originel : Bruno Castagné <ccrealink@aol.com>
- *                   http://www.net16annonce.com
- *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place, Suite 330, Boston, MA 02111-1307 USA
- *
- ******************************************************************************/
-include("config.php") ;
-
-?>
-<html>
-<head>
-<title>Licence de NFAQ</title>
-<LINK href="<?php echo $fichier_css ; ?>" type=text/css rel="STYLESHEET">
-</head>
-<body bgcolor="#ffffff"> 
-<?php
-
-// Connextion à la base de donnée
-$my_sql = @mysql_connect($host,$user,$pw) or die(mysql_error()) ;
-// Sélectionne la base
-@mysql_select_db("$db") or die(mysql_error()) ;
-
-// Vérifie que les 2 tables n'existe pas déjà
-$rep = @mysql_list_tables($db) ;
-
-$table = 0 ;
-
-while ($row = @mysql_fetch_array($rep))
-{
-    if (($row[0] == $prefixe_de_table . "question") || ($row[0] == $prefixe_de_table . "reponse"))
-    {
-        $tables++ ;
-    }
-}
-
-if (isset($HTTP_POST_VARS["installer"]) && ($tables != 2))
-{
-
-    if (($user == $HTTP_POST_VARS["login"]) && ($pw == $HTTP_POST_VARS["pass"]))
-    {
-        $query = @mysql_query("CREATE TABLE " . $prefixe_de_table . "question (id varchar(8) NOT NULL default '', texte longtext NOT NULL, auteur varchar(50) NOT NULL default '', date varchar(10) NOT NULL default '', mail varchar(100) NOT NULL default '', sujet varchar(100) NOT NULL default '', envoi char(3) NOT NULL default '', date_reelle datetime NOT NULL default '0000-00-00 00:00:00', UNIQUE KEY id (id), KEY auteur (auteur)) TYPE=MyISAM;") ;
-
-        echo "Création de la table contenant les questions : " ;
-
-        if ($query)
-        {
-            echo "OK" ;
-        }
-        else
-        {
-            echo "FAILED" ;
-        }
-
-        $query = @mysql_query("CREATE TABLE " . $prefixe_de_table . "reponse (id varchar(8) NOT NULL default '', texte longtext NOT NULL, auteur varchar(50) NOT NULL default '', date varchar(10) NOT NULL default '', mail varchar(100) NOT NULL default '', date_reelle datetime NOT NULL default '0000-00-00 00:00:00') TYPE=MyISAM;") ;
-
-        echo "<br>Création de la table contenant les réponses : " ;
-
-        if ($query)
-        {
-            echo "OK" ;
-        }
-        else
-        {
-            echo "FAILED" ;
-        }
-    }
-    else
-    {
-        echo "Mot de passe ou login incorrect !!!" ;
-    }
-}
-else if (isset($HTTP_POST_VARS["accept"]) && ($tables != 2))
-{
-?>
-<form method="post" action="install.php">
-  Login : 
-  <input type="text" name="login">
-  <br>
-  Mot de passe : 
-  <input type="text" name="pass">
-  <br>
-  <input type="submit" name="installer" value="Installer">
-</form>
-<?php
-}
-else if (isset($HTTP_POST_VARS["refuser"]) && ($tables != 2))
-{
-    echo "Désolé... Vous ne pouvez pas utiliser ou installer ce script sans l'acceptation de la licence." ;
-}
-else if ($tables == 2)
-{
-    echo "Tables déjà créées..." ;
-}
-else
-{
-?>
-<center>
-  <b><font face="Arial, Helvetica, sans-serif">GNU GENERAL PUBLIC LICENSE<br>
-  Version 2, June 1991</font></b>
-</center>
-<font face="Arial, Helvetica, sans-serif">Copyright (C) 1989, 1991 Free Software 
+<div class="aide">
+  Version 2, June 1991<br>
+Copyright (C) 1989, 1991 Free Software 
 Foundation, Inc.<br>
 675 Mass Ave, Cambridge, MA 02139, USA<br>
 <br>
 Everyone is permitted to copy and distribute verbatim copies of this license document, 
 but changing it is not allowed.<br>
 <br>
-</font>
 <center>
-  <font face="Arial, Helvetica, sans-serif"><b>Preamble</b></font>
+  <h3>Preamble</h3>
 </center>
-<font face="Arial, Helvetica, sans-serif"><br>
-</font>
-<div align="justify"><font face="Arial, Helvetica, sans-serif"> The licenses for 
-  most software are designed to take away your freedom to share and change it. 
-  By contrast, the GNU General Public License is intended to guarantee your freedom 
-  to share and change free software--to make sure the software is free for all 
-  its users. This General Public License applies to most of the Free Software 
-  Foundation's software and to any other program whose authors commit to using 
-  it. (Some other Free Software Foundation software is covered by the GNU Library 
-  General Public License instead.) You can apply it to your programs, too.<br>
+
+The licenses for most software 
+are designed to take away your freedom to share and change it. By contrast, the 
+GNU General Public License is intended to guarantee your freedom to share and 
+change free software--to make sure the software is free for all its users. This 
+General Public License applies to most of the Free Software Foundation's software 
+and to any other program whose authors commit to using it. (Some other Free Software 
+Foundation software is covered by the GNU Library General Public License instead.) 
+You can apply it to your programs, too.<br>
   <br>
   When we speak of free software, we are referring to freedom, not price. Our 
   General Public Licenses are designed to make sure that you have the freedom 
@@ -182,15 +57,12 @@ but changing it is not allowed.<br>
   follow.<br>
   <br>
   <br>
-  </font><b>
-  <center>
-    <font face="Arial, Helvetica, sans-serif">GNU GENERAL PUBLIC LICENSE</font>
+<center>
+    <h3>GNU GENERAL PUBLIC LICENSE</h3>
+    <h3>TERMS AND CONDITIONS FOR COPYING, 
+    DISTRIBUTION AND MODIFICATION</h3>
   </center>
-  <center>
-    <font face="Arial, Helvetica, sans-serif">TERMS AND CONDITIONS FOR COPYING, 
-    DISTRIBUTION AND MODIFICATION</font>
-  </center>
-  </b> <font face="Arial, Helvetica, sans-serif"><br>
+  <br>
   &nbsp;&nbsp;&nbsp;&nbsp;<b>0.</b> This License applies to any program or other 
   work which contains a notice placed by the copyright holder saying it may be 
   distributed under the terms of this General Public License. The "Program", below, 
@@ -374,11 +246,9 @@ but changing it is not allowed.<br>
   the free status of all derivatives of our free software and of promoting the 
   sharing and reuse of software generally. <br>
   <br>
-  </font> 
-  <center>
-    <font face="Arial, Helvetica, sans-serif"><b>NO WARRANTY</b></font>
-  </center>
-  <font face="Arial, Helvetica, sans-serif"><br>
+<center>
+  <h3>NO WARRANTY</h3> 
+</center>
   <br>
   &nbsp;&nbsp;&nbsp;&nbsp;<b>11.</b> BECAUSE THE PROGRAM IS LICENSED FREE OF CHARGE, 
   THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE 
@@ -399,19 +269,8 @@ but changing it is not allowed.<br>
   PROGRAMS), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY 
   OF SUCH DAMAGES. <br>
   <br>
-  </font> 
+
   <center>
-    <font face="Arial, Helvetica, sans-serif"><b>END OF TERMS AND CONDITIONS</b></font> 
-    <br>
-    <br>
-    <form method="post" action="<?php echo $url_site ; ?>install.php">
-      <input type="submit" name="refuser" value="Je refuse les conditions d'utilisation">&nbsp;
-      <input type="submit" name="accept" value="J'acc&egrave;pte les conditions d'utilisation">
-    </form>
-  </center>
+    <b>END OF TERMS AND CONDITIONS</b>
+</center>
 </div>
-<?php
-}
-?>
-</body>
-</html>

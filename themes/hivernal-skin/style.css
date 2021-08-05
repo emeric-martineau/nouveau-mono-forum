@@ -1,0 +1,131 @@
+body {
+  PADDING-RIGHT: 0px; PADDING-LEFT: 0px; FONT-SIZE: 11px; PADDING-BOTTOM: 0px; MARGIN: 0px; COLOR: #000000; PADDING-TOP: 5px; FONT-FAMILY: Verdana, Tahoma, Arial, sans-serif; BACKGROUND-COLOR: #ffffff; TEXT-ALIGN: center ;
+}
+
+table.body {
+  FONT-SIZE: 11px;
+}
+
+table.menu {
+    background-color : #DEE7EF ;
+}
+td.menu  {
+    background-color : #BDD3EF ;
+}
+tr.menu  {
+    background-color : #BDD3EF ;
+}
+a.menu:link {
+  FONT-WEIGHT: bold; FONT-SIZE: 10px; COLOR: #3a4f6c; TEXT-DECORATION: none
+}
+a.menu:visited {
+  FONT-WEIGHT: bold; FONT-SIZE: 10px; COLOR: #3a4f6c; TEXT-DECORATION: none
+}
+a.menu:active {
+  FONT-WEIGHT: bold; FONT-SIZE: 10px; COLOR: #3a4f6c; TEXT-DECORATION: none
+}
+a.menu:hover {
+  FONT-WEIGHT: bold; FONT-SIZE: 10px; COLOR: #3a4f6c; TEXT-DECORATION: none
+}
+
+a:link {
+  COLOR: #000; TEXT-DECORATION: underline
+}
+a:visited {
+  COLOR: #000; TEXT-DECORATION: underline
+}
+a:active {
+  COLOR: #000; TEXT-DECORATION: underline
+}
+a:hover {
+  COLOR: #465584; TEXT-DECORATION: underline
+}
+
+table.listemessage {
+}
+td.listemessage  {
+    background-color : #315584 ;
+}
+tr.listemessage  {
+    background-color : #315584 ;
+}
+
+tr.titre {
+    FONT-SIZE: 11px; FONT-WEIGHT: bold; COLOR : #394D6B ;
+}
+td.titreIcone {
+}
+td.titreTitreSujet {
+}
+td.titreCreateurSujet {
+}
+td.titreReponse {
+}
+td.titreDerniereReponse {
+}
+
+tr.message {
+    FONT-SIZE: 11px;
+}
+td.messageIcone {
+  background-color : #DEE7EF ;
+}
+td.messageTitreSujet {
+  background-color : #E7EBF7 ;
+}
+td.messageCreateurSujet {
+  background-color : #DEE7EF ;
+}
+td.messageReponse {
+  background-color : #E7EBF7 ;
+}
+td.messageDerniereReponse {
+  background-color : #DEE7EF ;
+}
+
+table.piedDeTableauListe {
+  background-color : #BDD3EF ; FONT-SIZE: 11px;
+}
+select.piedDeTableauListe {
+  FONT-SIZE: 11px;
+}
+input.piedDeTableauListe {
+  FONT-SIZE: 11px;
+}
+
+table.piedDeTableauListe1 {
+  background-color : #DEE7EF ; FONT-SIZE: 11px;
+}
+
+table.sousTitre {
+  background-color : #D6DFEF ; FONT-SIZE: 11px;
+}
+tr.sousTitre {
+  background-color : #D6DFEF ; FONT-SIZE: 11px; color : #394D6B; FONT-WEIGHT: bold;
+}
+tr.ligneAjout {
+  background-color : #F7FBFF ; FONT-SIZE: 11px; FONT-WEIGHT: none;
+}
+input.ligneAjout {
+  FONT-SIZE: 11px;
+}
+
+.ligneTitreMessageReponse {
+  background-color : #E7EBF7 ; FONT-SIZE: 11px;
+}
+.ligneTitreMessageReponse2 {
+  background-color : #EFF3F7 ; FONT-SIZE: 11px;
+}
+
+tr.rechercher {
+    FONT-SIZE: 11px;
+}
+
+.aide {
+    FONT-SIZE: 11px;
+}
+
+
+h1.aide {
+    FONT-SIZE: 14px
+}

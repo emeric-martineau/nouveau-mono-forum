@@ -1,0 +1,915 @@
+<html>
+<head>
+<title>Documentation de NouveauMonoForum</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body bgcolor="#FFFFFF">
+<table border="0" cellpadding="2">
+  <tr>
+    <td><a href="#1">1 - Introduction</a></td>
+  </tr>
+  <tr>
+    <td><a href="#2">2 - Installation Manuelle</a><br>
+      <table border="0" cellpadding="2">
+        <tr>
+          <td>&nbsp;&nbsp;</td>
+          <td><a href="#21">2.1 - Configuration</a></td>
+        </tr>
+        <tr>
+          <td>&nbsp;</td>
+          <td><a href="#22">2.2 - Copie des fichiers sur les servers</a></td>
+        </tr>
+        <tr>
+          <td>&nbsp;</td>
+          <td><a href="#23">2.3 - Création de la base de donn&eacute;es</a></td>
+        </tr>
+        <tr>
+          <td>&nbsp;</td>
+          <td><a href="#24">2.4 - Cr&eacute;ation des tables dans la base de donn&eacute;es</a></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td><a href="#3">3 - Installation automatique</a></td>
+  </tr>
+  <tr>
+    <td><a href="#4">4 - S&eacute;curisation du site</a><br>
+      <table border="0" cellpadding="2">
+        <tr> 
+          <td>&nbsp;&nbsp;</td>
+          <td><a href="#41">4.1 - Suppression des fichiers d'installation</a></td>
+        </tr>
+        <tr> 
+          <td>&nbsp;</td>
+          <td><a href="#42">4.2 - Attributs des scripts</a></td>
+        </tr>
+        <tr> 
+          <td>&nbsp;</td>
+          <td><a href="#43">4.3 - S&eacute;curisation du r&eacute;pertoire include/ 
+            sur un server Apache </a></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td><a href="#5">5 - Personnalisation du site</a><br>
+      <table border="0" cellpadding="2">
+        <tr> 
+          <td>&nbsp;&nbsp;</td>
+          <td> <a href="#51">5.1 - Personnalisation par th&egrave;me </a> 
+            <table border="0" cellpadding="2">
+              <tr> 
+                <td>&nbsp;</td>
+                <td><a href="#511">5.1.1 - Création d'un thème </a> 
+                  <table border="0" cellpadding="2">
+                    <tr> 
+                      <td>&nbsp;&nbsp;</td>
+                      <td><a href="#5121">5.1.2.1 - Feuille de style</a></td>
+                    </tr>
+                    <tr> 
+                      <td>&nbsp;</td>
+                      <td><a href="#5122">5.1.2.2 - Icônes standards</a></td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr> 
+          <td>&nbsp;</td>
+          <td><a href="#52">5.2 - Personnalisation des smileys</a></td>
+        </tr>
+        <tr> 
+          <td>&nbsp;</td>
+          <td><a href="#53">5.3 - Personnalisation du BBCode</a></td>
+        </tr>
+        <tr> 
+          <td>&nbsp;</td>
+          <td><a href="#54">5.4 - Personnalisation de la censure</a></td>
+        </tr>
+        <tr> 
+          <td>&nbsp;</td>
+          <td><a href="#55">5.5 - Personnalisation de l'e-mail envoyé automatiquement</a></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td><a href="#6">6 - Indication des tailles des champs de la base de données 
+      et fonctions</a></td>
+  </tr>
+  <tr>
+    <td><a href="#7">7 - Mise &agrave; jour manuelle</a><br>
+      <table border="0" cellpadding="2">
+        <tr> 
+          <td>&nbsp;&nbsp;</td>
+          <td><a href="#71">7.1 - Configuration du site</a></td>
+        </tr>
+        <tr> 
+          <td>&nbsp;</td>
+          <td><a href="#72">7.2 - Smileys</a></td>
+        </tr>
+        <tr> 
+          <td>&nbsp;</td>
+          <td><a href="#73">7.3 - BBCode</a></td>
+        </tr>
+        <tr> 
+          <td>&nbsp;</td>
+          <td><a href="#74">7.4 - Censure</a></td>
+        </tr>
+        <tr> 
+          <td>&nbsp;</td>
+          <td><a href="#75">7.5 - E-mail</a></td>
+        </tr>
+        <tr>
+          <td>&nbsp;</td>
+          <td><a href="#76">7.6 - Mise &agrave; jour de la base de donn&eacute;es</a></td>
+        </tr>
+      </table>     
+    </td>
+  </tr>
+  <tr>
+    <td><a href="#8">8 - Mise &agrave; jour automatiquement</a></td>
+  </tr>
+  <tr>
+    <td><a href="#9">9 - Variables GET</a></td>
+  </tr
+></table>
+<br>
+<h1>1 - Introduction<a name="1"></a></h1>
+<b>NouveauMonoForum</b> est un mono-forum (forum avec un seul salon) o&ugrave; 
+tout le monde peut d&eacute;poser un message, consulter et r&eacute;pondre, sans 
+n&eacute;cessit&eacute; une authentification.<br>
+Les messages sont supprim&eacute;s automatiquement tous les X (configurable)&nbsp;jours 
+apr&egrave;s qu'un message n'est plus &eacute;t&eacute; lu.<br>
+<br>
+Le forum g&egrave;re tout automatiquement, les urls dans les messages sont automatiquement 
+cliquables, les smileys sont convertis en images, les retours de lignes sont g&eacute;r&eacute;s 
+automatiquement et le forum g&egrave;re le BBCode afin d'agr&eacute;menter vos 
+messages.<br>
+Pour votre confort, votre nom et adresse e-mail sont m&eacute;moris&eacute;s dans 
+un cookie d&eacute;pos&eacute; sur votre ordinateur, évitant ainsi la resaisie.<br>
+Rassurez-vous toutefois, <b>NouveauMonoForum</b> ne contient pas la moindre lettre 
+de JavaScript.<br>
+Le forum dispose &eacute;galement d'un filtre qui censure certains mots et il 
+est possible, suivant la configuration du forum et du serveur h&eacute;bergeur, 
+d'&ecirc;tre pr&eacute;venu par e-mail quand une r&eacute;ponse est post&eacute;e. 
+<br>
+<h1>2 - Installation Manuelle<a name="2"></a></h1>
+Pour l'installation manuelle, il est IMPERATIF d'avoir des notions de PHP et de 
+SQL.<br>
+Il faut bien &eacute;videmment t&eacute;l&eacute;charger les derniers scripts 
+de NouveauMonoForum 1.4 sur le site officiel <a href="http://php4php.free.fr/nfaq">http://php4php.free.fr/nfaq</a>. 
+D&eacute;compresser l'archive localement (sur votre ordinateur) ou directement 
+sur le server web que vous utilisez.<br>
+<h2>2.1 - Configuration<a name="21"></a></h2>
+La configuration de <b>NouveauMonoForum</b> est concentr&eacute; dans un seul 
+fichier <b>config.php</b> qui se site dans le r&eacute;pertoire <b>include/</b>. 
+Le nom et la fonction de chaque variable est indiqu&eacute; ci-dessous.<br>
+<br>
+<table border="1" cellspacing="2" cellpadding="2">
+  <tr> 
+    <td><b>Variables</b></td>
+    <td><b>Valeur</b></td>
+    <td><b>Explication</b></td>
+  </tr>
+  <tr> 
+    <td>$host </td>
+    <td>&quot;localhost&quot;</td>
+    <td>host ou adresse IP pour se connecteur au serveur de base de donn&eacute;es</td>
+  </tr>
+  <tr> 
+    <td>$user </td>
+    <td>&quot;root&quot;</td>
+    <td>nom d'utilisateur ou le login fourni par votre h&eacute;bergeur</td>
+  </tr>
+  <tr> 
+    <td>$pw </td>
+    <td>&quot;&quot;</td>
+    <td>mot de passe</td>
+  </tr>
+  <tr> 
+    <td>$db </td>
+    <td>&quot;forum&quot;</td>
+    <td>nom de la base de donn&eacute;es (sous Free, c'est le nom du login)</td>
+  </tr>
+  <tr> 
+    <td>$prefixe_de_table </td>
+    <td>&quot;faq_&quot;</td>
+    <td>pr&eacute;fixe des noms des tables utilis&eacute;es par NFAQ</td>
+  </tr>
+  <tr> 
+    <td>$nb_post_par_page </td>
+    <td>10</td>
+    <td>nombre de questions afficher par page</td>
+  </tr>
+  <tr> 
+    <td>$nb_jour_avant_suppression </td>
+    <td>60</td>
+    <td>nombre de jours sans lecture d'une question avant quelle soit supprim&eacute;e. 
+      Si la valeur est supp&eacute;rieur &agrave; 0, alors les messages sont supprim&eacute;s, 
+      sinon, les messages ne sont pas supprim&eacute;s.</td>
+  </tr>
+  <tr> 
+    <td>$titre_forum </td>
+    <td>&quot;La foire aux questions&quot;</td>
+    <td>Nom du site</td>
+  </tr>
+  <tr> 
+    <td>$url_site </td>
+    <td>&quot;http://localhost/nfaq/&quot;</td>
+    <td>URL du site</td>
+  </tr>
+  <tr> 
+    <td>$can_send_email </td>
+    <td> true </td>
+    <td>Indique si les utilisateurs peuvent demander &agrave; revevoir un e-mail 
+      en cas de r&eacute;ponse. (Free &agrave; d&eacute;sactiver la fonction mail(). 
+      Vous devez donc mettre se param&egrave;tre &agrave; false). Il faut savoir 
+      que NFAQ cherche s'il est possible d'envoyer des e-mail. Si ce n'est pas 
+      le cas, l'envoie est automatiquement d&eacute;sactiv&eacute;.</td>
+  </tr>
+  <tr> 
+    <td>$SCRIPTNAME</td>
+    <td>&quot;forum.php&quot;</td>
+    <td>Nom du fichier affichant le forum. Ici (et par d&eacute;faut), il sagit 
+      du fichier forum.php</td>
+  </tr>
+  <tr> 
+    <td>$nb_rep_pr_msg_hot</td>
+    <td>25</td>
+    <td>Indique le nombre de r&eacute;ponses n&eacute;cessaire pour qu'un message 
+      devienne populaire</td>
+  </tr>
+</table>
+<br>
+La ligne suivante <br>
+<pre>
+/* Vérifie que le fichier n'est pas affiché seul */
+if ( !defined('IN_NMF') )
+{
+    die('Restricted access');
+}
+</pre>
+est afin de ne pas permettre au fichier de s'ex&eacute;cuter en dehors du site 
+(par un appel direct).<br>
+<h2>2.2 - Copie des fichiers sur les servers<a name="22"></a></h2>
+Si vous avez d&eacute;compress&eacute; les fichiers localement, il faut &agrave; 
+pr&eacute;sent copier les fichiers sur le server web.<br>
+<h2>2.3 - Création de la base de donn&eacute;es<a name="23"></a></h2>
+Pour cr&eacute;er la base de donn&eacute;es, il faut utiliser les outils mis &agrave; 
+votre disposition par votre h&eacute;bergeur web. Si auncuns outils n'est mis 
+&agrave; votre disposition (ce qui parait tr&egrave;s &eacute;tonnant), ex&eacute;cuter 
+la commande SQL suivant : <b>CREATE DATABASE <i>nom_de_la_base_de_donnees</i></b>.<br>
+<h2>2.4 - Cr&eacute;ation des tables dans la base de donn&eacute;es<a name="24"></a></h2>
+Pour cr&eacute;er les tables, ex&eacute;cuter les requ&ecirc;tes SQL suivantes, 
+o&ugrave; <b><i>prefixe_</i></b> est le pr&eacute;fixe de table que vous avez 
+affecter &agrave; la variable <b>$prefixe_de_table</b> :<br>
+<pre>
+CREATE TABLE <b><i>prefixe_</i></b>question (
+   id varchar(8) NOT NULL,
+   texte longtext NOT NULL,
+   auteur varchar(50) NOT NULL,
+   date varchar(10) NOT NULL,
+   mail varchar(100) NOT NULL,
+   sujet varchar(100) NOT NULL,
+   envoi char(3) NOT NULL,
+   date_reelle datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+   UNIQUE id (id),
+   KEY auteur (auteur)
+);
+
+CREATE TABLE <b><i>prefixe_</i></b>reponse (
+   id varchar(8) NOT NULL,
+   texte longtext NOT NULL,
+   auteur varchar(50) NOT NULL,
+   date varchar(10) NOT NULL,
+   mail varchar(100) NOT NULL,
+   date_reelle datetime DEFAULT '0000-00-00 00:00:00' NOT NULL
+);
+</pre>
+<h1>3 - Installation automatique<a name="3"></a></h1>
+Afin de facilit&eacute; la mise en place de <b>NouveauMonoForum</b>, il existe 
+un proc&eacute;dure d'installation automatique. Pour cela, t&eacute;l&eacute;charger 
+les fichiers de <b>NouveauMonoForum</b> sur votre serveur web (ou celui de votre 
+h&eacute;bergeur), et ex&eacute;cuter le lien suivant http://mon_site/repertoire_contenant_nouveaumonoforum/install/.<br>
+Toutefois, avant de continuer, il faut vous assurez que le serveur web puisse 
+&eacute;crire dans le r&eacute;poertoire o&ugrave; vous avez stock&eacute; les 
+fichiers de <b>NouveauMonoForum</b>.<br>
+Vous verrez appara&icirc;tre l'&eacute;cran ci-dessous :<br>
+<br>
+<img src="install-auto1.jpg" width="512" height="384"><br>
+<br>
+Cliquez sur <b>Cliquez pour continer</b> pour continuer et afficher la licence 
+d'exploitation de <b>NouveauMonoForum</b>. Tout en bas, il y a un lien <b>Cliquez 
+pour continer</b>.<br>
+Ensuite, vous aurez le choix entre <b>Installer NouveauMonoForum - Mettre &agrave; 
+jour NAFQ 1.X vers NouveauMonoForum</b> bien &eacute;videment, ici, il faudra 
+cliquez sur le lien <b>Installer NouveauMonoForum</b>.<br>
+<br>
+Un formulaire appara&icirc;t. Vous devez le remplir convenablement pour que <b>NouveauMonoForum</b> 
+puisse fonctionner.<br>
+<br>
+<table border="1" cellspacing="2" cellpadding="0">
+  <tr>
+    <td>Login de connexion à la base de données</td>
+    <td>Identifiant qui vous permet de vous connecter &agrave; la base de donn&eacute;e. 
+      Pour les sites persos comme Free, c'est le nom de la connextion pour l'e-mail 
+      et le FTP.</td>
+  </tr>
+  <tr>
+    <td>Mot de passe &agrave; la base de donn&eacute;es </td>
+    <td>Mot de passe qui vous permet de vous connecter &agrave; la base de donn&eacute;e. 
+      Pour les sites persos comme Free, c'est le mot de passe de la connextion 
+      pour l'e-mail et le FTP.</td>
+  </tr>
+  <tr>
+    <td>Host de la base de donn&eacute;es </td>
+    <td>Bien souvent, la valeur est localhost.</td>
+  </tr>
+  <tr>
+    <td>Base de donn&eacute;es </td>
+    <td>Nom de la base de donn&eacute;es. Pour les sites persos comme Free, c'est 
+      le nom de la connextion pour l'e-mail et le FTP.</td>
+  </tr>
+  <tr>
+    <td>Pr&eacute;fixe des tables </td>
+    <td>Si vous avez d&eacute;j&agrave; plusieurs scripts qui utilisent votre 
+      base de donn&eacute;es, il est bon de mettre un prefixe devant les tables, 
+      pour les reconnaitre plus facilement.</td>
+  </tr>
+  <tr>
+    <td>Nombre de messages par page </td>
+    <td>Nombre de sujet qui est afficher par page dans la liste des sujets, la 
+      recherche, et les r&eacute;ponses.</td>
+  </tr>
+  <tr>
+    <td>Nombre de jours de non lecture avant suppression d'un message </td>
+    <td><b>NouveauMonoForum</b> peut supprimer automatiquement les sujets qui 
+      n'ont pas &eacute;t&eacute; lu ou r&eacute;pondu depuis X jours. Le X &eacute;tant 
+      la valeur que vous allez saisir. Si vous ne voulez pas supprimer les messages 
+      en fonction du jour, cocher <b>Ne pas supprimer</b></td>
+  </tr>
+  <tr>
+    <td>Nombre de r&eacute;ponses pour qu'un message soit populaire </td>
+    <td>Indique le nombre de r&eacute;ponses minimum pour qu'un message soit indiquez 
+      comme populaire.</td>
+  </tr>
+  <tr>
+    <td>Permettre l'envoie d'un e-mail qu'on une r&eacute;ponse est donn&eacute;e 
+    </td>
+    <td>Si oui, permet aux gens qui postent un message ou une r&eacute;ponse d'indique 
+      si oui ou non ils veulent &ecirc;tre pr&eacute;venu par e-mail quand une 
+      r&eacute;ponse est d&eacute;pos&eacute;e.</td>
+  </tr>
+  <tr>
+    <td>Titre du forum </td>
+    <td>Titre que vous souhaitez donner &agrave; votre forum</td>
+  </tr>
+  <tr>
+    <td>URL du site</td>
+    <td>Adresse internet pour acc&egrave;der au site sans le nom du script (forum.php)</td>
+  </tr>
+  <tr>
+    <td>Nom du fichier du script</td>
+    <td>Nom du script qui ex&eacute;cute le forum (par d&eacute;faut forum.php)</td>
+  </tr>
+  <tr>
+    <td>Thème</td>
+    <td>Liste des th&egrave;mes disponible</td>
+  </tr>
+</table>
+<br>
+Une fois le formulaire rempli, validez en cliquant sur le bouton <b>Enregistrer 
+la configuration</b>. Un &eacute;cran du type ci-dessous apparait :<br>
+<br>
+<img src="install-auto2.jpg" width="512" height="384"> <br>
+<br>
+Sur cet &eacute;cran, on voit que la cr&eacute;ation des tables &agrave; r&eacute;ussi, 
+le fichier de configuration a bien &eacute;t&eacute; enregistr&eacute; mais que 
+les fichiers d'installation n'ont pus &ecirc;tre supprim&eacute; (normal ici car 
+il s'agissait d'un test). Si une telle situation vous arrive, vous devez supprimer 
+vous m&ecirc;me les fichiers.<br>
+<br>
+<b>NOTE</b> : Vous pouvez utilisez la procedure d'installation pour reg&eacute;n&eacute;rer 
+un fichier de config. Dans ce cas, la cr&eacute;ation des tables &eacute;choura 
+car elles seront d&eacute;j&agrave; existante, mais ne d&eacute;truira aucunes 
+donn&eacute;es.<br>
+<h1>4 - S&eacute;curisation du site<a name="4"></a></h1>
+<h2>4.1 - Suppression des fichiers d'installation<a name="41"></a></h2>
+Afin de r&eacute;duire les trous de s&eacute;curit&eacute;, il est conseill&eacute;, 
+voir IMPERATIF, de supprimer le r&eacute;pertoire <b>install/</b>, &eacute;tant 
+donn&eacute; que si on le laisse pr&eacute;sent, avec les fichers, on peut r&eacute;-ex&eacute;cut&eacute; 
+par n'importe qui.<br>
+<h2>4.2 - Attributs des scripts<a name="42"></a></h2>
+Le site n'ayant besoin de modifier un quelconque fichiers, il est conseill&eacute; 
+de ne laisser que l'attribut lecture sur les ficheirs et r&eacute;pertoire par 
+le server web.<br>
+<h2>4.3 - S&eacute;curisation du r&eacute;pertoire include/ sur un server Apache<a name="43"></a></h2>
+Si le server web sur lequel s'ex&eacute;cute <b>NouveauMonoForum</b> est le server 
+web Apache, cr&eacute;ez un fichier nomm&eacute; <b>.htaccess</b>, contenant la 
+ligne : <b>deny from all</b>.<br>
+<h1>5 - Personnalisation du site<a name="5"></a></h1>
+<b>NouveauMonoForum</b> &eacute;tant plut&ocirc;t destin&eacute; &agrave; un usage 
+particulier que professionnel, il n'est pas possible de modifier la forme de <b>NouveauMonoForum</b> 
+mais seulement les couleurs/polices et les ic&ocirc;nes standards.<br>
+<h2>5.1 - Personnalisation par th&egrave;me<a name="51"></a></h2>
+<h3>5.1.1 - Création d'un thème<a name="511"></a></h3>
+Pour cr&eacute;er un th&egrave;me, il suffit de cr&eacute;er un r&eacute;pertoire 
+dans le r&eacute;pertoire <b>themes/</b>, ce nom de r&eacute;pertoire sera le 
+nom du th&egrave;me.<br>
+Dans ce r&eacute;pertoire, il y a le fichier <b>style.css</b> et le r&eacute;pertoire 
+<b>images/</b>, contenant les images standards.<br>
+<h3>5.1.2.1 - Feuille de style<a name="5121"></a></h3>
+Pour personnaliser <b>NouveauMonoForum</b>, il suffit de configurer les balises 
+HTML ou les classes pr&eacute;senets dans la feuille de style <b>style.css</b> 
+dans le r&eacute;pertoire du th&egrave;me choisi.<br>
+<br>
+<table border="1" cellspacing="2">
+  <tr> 
+    <td><b>Balises HTML ou classes</b></td>
+    <td><b>Explications</b></td>
+  </tr>
+  <tr> 
+    <td>body </td>
+    <td> corps complet des pages</td>
+  </tr>
+  <tr> 
+    <td>table.body </td>
+    <td> tableau prenant 95% de la page. Sert juste à configurer la taille de 
+      la police qui n'est pas toujours pris en compte par balise body.</td>
+  </tr>
+  <tr> 
+    <td colspan="2">&nbsp;</td>
+  </tr>
+  <tr> 
+    <td>table.menu </td>
+    <td> fond de la barre de menu contenant le lien aide, rechercher</td>
+  </tr>
+  <tr> 
+    <td>td.menu </td>
+    <td> bordure de la barre de menu</td>
+  </tr>
+  <tr> 
+    <td>tr.menu </td>
+    <td> bordure de la barre de menu</td>
+  </tr>
+  <tr> 
+    <td>a.menu:link </td>
+    <td> lien de la barre de menu</td>
+  </tr>
+  <tr> 
+    <td>a.menu:visited </td>
+    <td> lien de la barre de menu quand on a déjà cliqué dessus</td>
+  </tr>
+  <tr> 
+    <td>a.menu:active </td>
+    <td> lien de la barre de menu quand on clique dessus</td>
+  </tr>
+  <tr> 
+    <td>a.menu:hover </td>
+    <td> lien de la barre de menu quand la souris est dessus</td>
+  </tr>
+  <tr> 
+    <td colspan="2">&nbsp;</td>
+  </tr>
+  <tr> 
+    <td>a:link </td>
+    <td> lien </td>
+  </tr>
+  <tr> 
+    <td>a:visited </td>
+    <td> lien quand on a déjà cliqué dessus</td>
+  </tr>
+  <tr> 
+    <td>a:active </td>
+    <td> lien quand on clique dessus</td>
+  </tr>
+  <tr> 
+    <td>a:hover </td>
+    <td> lien quand la souris est dessus</td>
+  </tr>
+  <tr> 
+    <td colspan="2">&nbsp;</td>
+  </tr>
+  <tr> 
+    <td>table.listemessage </td>
+    <td> table contenant la liste des sujets présents (avec la liste, titre), 
+      c'est par là aussi qu'on peut configurer la zone centrale qui est encadée</td>
+  </tr>
+  <tr> 
+    <td>td.listemessage </td>
+    <td> bords verticaux de la zone centrale </td>
+  </tr>
+  <tr> 
+    <td>tr.listemessage </td>
+    <td> bords horizontaux de la zone centrale </td>
+  </tr>
+  <tr> 
+    <td colspan="2">&nbsp;</td>
+  </tr>
+  <tr> 
+    <td>tr.titre </td>
+    <td> zone de titre dans la zone centrale (Titre sujet, Ecriture d'un nouveau 
+      message)</td>
+  </tr>
+  <tr> 
+    <td>td.titreIcone </td>
+    <td> Titre de la colone icône dans la liste des sujets</td>
+  </tr>
+  <tr> 
+    <td>td.titreTitreSujet </td>
+    <td> Titre de la colone sujet dans la liste des sujets</td>
+  </tr>
+  <tr> 
+    <td>td.titreCreateurSujet </td>
+    <td> Titre de la colone créateur du sujet dans la liste des sujets</td>
+  </tr>
+  <tr> 
+    <td>td.titreReponse </td>
+    <td> Titre de la colone nombre de réponse dans la liste des sujets</td>
+  </tr>
+  <tr> 
+    <td>td.titreDerniereReponse </td>
+    <td> Titre de la colone dernière réponse dans la liste des sujets</td>
+  </tr>
+  <tr> 
+    <td colspan="2">&nbsp;</td>
+  </tr>
+  <tr> 
+    <td>tr.message </td>
+    <td> ligne contenant les messages present sur le site</td>
+  </tr>
+  <tr> 
+    <td>td.messageIcone </td>
+    <td> colone contenant l'icône</td>
+  </tr>
+  <tr> 
+    <td>td.messageTitreSujet </td>
+    <td> colone contenant le sujet</td>
+  </tr>
+  <tr> 
+    <td>td.messageCreateurSujet </td>
+    <td> colone contenant le créateur du sujet</td>
+  </tr>
+  <tr> 
+    <td>td.messageReponse </td>
+    <td> colone contenant le nombre de réponse</td>
+  </tr>
+  <tr> 
+    <td>td.messageDerniereReponse </td>
+    <td> colone contenant la dernière réponse</td>
+  </tr>
+  <tr> 
+    <td colspan="2">&nbsp;</td>
+  </tr>
+  <tr> 
+    <td>table.piedDeTableauListe </td>
+    <td> table contenant la zone avec le nombre de page, les boutons suivant précédents...</td>
+  </tr>
+  <tr> 
+    <td>select.piedDeTableauListe </td>
+    <td> liste déroulante dans le tableau ci-dessus</td>
+  </tr>
+  <tr> 
+    <td>input.piedDeTableauListe </td>
+    <td> zone de saisie dans le tableau ci-dessus</td>
+  </tr>
+  <tr> 
+    <td colspan="2">&nbsp;</td>
+  </tr>
+  <tr> 
+    <td>table.piedDeTableauListe1 </td>
+    <td> table contenant classer par ...</td>
+  </tr>
+  <tr> 
+    <td colspan="2">&nbsp;</td>
+  </tr>
+  <tr> 
+    <td>table.sousTitre </td>
+    <td> tableau contenant le forumulaire d'ajout/réponse d'un message</td>
+  </tr>
+  <tr> 
+    <td>tr.sousTitre </td>
+    <td> Ligne contenant les sous titres Informations sur l'utilisateur</td>
+  </tr>
+  <tr> 
+    <td>tr.ligneAjout </td>
+    <td> Ligne contenant les zones de saisie</td>
+  </tr>
+  <tr> 
+    <td>input.ligneAjout </td>
+    <td> zone de saisie</td>
+  </tr>
+  <tr> 
+    <td colspan="2">&nbsp;</td>
+  </tr>
+  <tr> 
+    <td>.ligneTitreMessageReponse </td>
+    <td> ligne contenant le nom de l'auteur et la date</td>
+  </tr>
+  <tr> 
+    <td>.ligneTitreMessageReponse2 </td>
+    <td> ligne contenant les messages/réponses dans la visualisation</td>
+  </tr>
+  <tr> 
+    <td colspan="2">&nbsp;</td>
+  </tr>
+  <tr> 
+    <td>tr.rechercher </td>
+    <td> ligne contenant les zones de saisie de la recherche</td>
+  </tr>
+  <tr> 
+    <td>.aide </td>
+    <td> défini la police, taille et fond de couleur de l'aide</td>
+  </tr>
+  <tr> 
+    <td>h1.aide </td>
+    <td> titre des chapitres dans l'aide</td>
+  </tr>
+</table>
+<br>
+<h3>5.1.2.2 - Icônes standards<a name="5122"></a></h3>
+Il y a cinq ic&ocirc;nes standard. Celle pour l'aide (aide.gif), la recherche 
+(search.gif), un nouveau message (message-nouveau.gif), un message lu et avec 
+des r&eacute;ponses (message.gif) et un message populaire (message-hot.gif). C'est 
+ic&ocirc;ne sont pr&eacute;sentes dans le <b>r&eacute;pertoire themes/</b><i>mon_theme</i><b>/images/</b>.<br>
+<h2>5.2 - Personnalisation des smileys<a name="52"></a></h2>
+Les images des smileys se trouvent dans le r&eacute;pertoire <b>images/smiley</b>. 
+Pour que les images puissent appara&icirc;tre dans la liste et dans les messages, 
+il faut configurer le fichier <b>include/smileys.php</b>. Pour le modifier, il 
+vous faut imp&eacute;rativement conna&icirc;tre les bases du PHP. C'est &agrave; 
+dire, la variable contenant la liste des smileys, avec leur code de remplacement 
+et leur description se nomme <b>$smiley[]</b>. Le premier champ est le code de 
+remplacement, le deuxi&egrave;me est le nom de l'image, le trois&egrave;me est 
+la description. Exemple :<br>
+$smiley[] = array("Z:-)", "diable.gif", "Diablotin"); <br>
+Indique que le texte <b>Z:-)</b> pr&eacute;sent dans les messages est remplac&eacute; 
+par l'image <b>diable.gif</b>. Quand on se position sur l'image, la description 
+appara&icirc;tra.<br>
+<h2>5.3 - Personnalisation du BBCode<a name="53"></a></h2>
+Le BBCode, code permettant d'ins&eacute;rer des balises HTML, sans que ce soit 
+du code HTML, &eacute;vitant ainsi des attaques, se trouve dans le fichier <b>include/bbcode.php</b>.<br>
+Comme pour les smileys, le bbcode est stock&eacute; dans la variable<br>
+$bbcode[] = array("[b]", "&lt;b&gt;", "Balise d'ouverture du texte en gras") ; 
+<br>
+Le premier champ, est le code BBCode, le deuxi&egrave;me est la correspondance 
+en code HTML. Le dernier champs est la description.<br>
+<h2>5.4 - Personnalisation de la censure<a name="54"></a></h2>
+La censure est enregistr&eacute; dans le fichier <b>include/censure.php</b>. La 
+variable<b> $texte_a_inserer</b> contient le texte qui remplacera les mots interdits. 
+On peut dans ce texte mettre du BBCode.<br>
+La variable <b>$censure</b> contient les mots ou brides de mots qui doivent &ecirc;tre 
+censur&eacute;s. Exemple, si on veut censurer les mots commencant par encu et 
+merde, il faut entrer la ligne suivante :<br>
+$censure = array("merde", &quot;encu&quot;) ;<br>
+<br>
+Il faut pr&eacute;ciser que seul les morceaux pr&eacute;sent dans le tableau sont 
+supprim&eacute;s et non les mots entier.<br>
+<br>
+<h2>5.5 - Personnalisation de l'e-mail envoyé automatiquement<a name="55"></a></h2>
+Vous pouvez personnaliser l'e-mail qui est envoy&eacute; automatiquement quand 
+une r&eacute;ponse est donn&eacute;e &agrave; un message. Le fichier<b> include/email.php</b> 
+contient cet e-mail. Le fichier est au format d'un fichier PHP, balise ouvrant 
+<b>&lt;?php</b> et fermatant <b>?&gt;</b>, cependant, l'int&eacute;rieur est un 
+fichier texte normal.<br>
+La deuxi&egrave;me ligne du fichier est obligatoirement le titre de l'e-mail. 
+Le reste, est le corps du message. Exemple ci-dessous : <br>
+<pre>&lt;?php die ("Restricted access") ;
+Titre du sujet
+1&egrave;re ligne du message,<br>2&egrave;me ligne du message<br><br>4&egrave;me ligne du message
+?&gt;
+</pre>
+Il faut noter que la derni&egrave;re ligne, celle qui contient <b>?&gt;</b> n'apparait 
+pas dans le message.<br>
+On peut mettre dans le titre, comme dans le message 4 constantes qui seront 
+remplac&eacute; par les valeurs en rapport avec le message. Ces valeurs sont :<br>
+<br>
+<table border="1" cellspacing="2" cellpadding="0">
+  <tr> 
+    <td>{ ADRESSE_AUTEUR }</td>
+    <td>adresse e-mail de l'auteur de la r&eacute;ponse</td>
+  </tr>
+  <tr> 
+    <td>{ TEXTE }</td>
+    <td>r&eacute;ponse</td>
+  </tr>
+  <tr> 
+    <td>{ AUTEUR }</td>
+    <td>auteur de la r&eacute;ponse</td>
+  </tr>
+  <tr>
+    <td>{ SITE_WEB }</td>
+    <td>nom du forum/du site</td>
+  </tr>
+  <tr> 
+    <td>{ QUESTION }</td>
+    <td>question pos&eacute;e</td>
+  </tr>
+</table>
+<br>
+<h1>6 - Indication des tailles des champs de la base de donn&eacute;es<a name="6"></a></h1>
+Tous les champs exploit&eacute;s par <b>NouveauMonoForum</b> ont une longueur 
+limit&eacute;e. Les tableaux ci-dessous en font un r&eacute;capitulatif :<br>
+<br>
+<table border="1" cellspacing="2" cellpadding="0">
+  <tr> 
+    <td colspan="3">Table contenant les questions</td>
+  </tr>
+  <tr> 
+    <td><b>champs</b></td>
+    <td><b>taille</b></td>
+    <td><b>fonction</b></td>
+  </tr>
+  <tr> 
+    <td>id</td>
+    <td>8 caract&egrave;res maxi</td>
+    <td>identificateur de la question</td>
+  </tr>
+  <tr> 
+    <td>texte</td>
+    <td>longueur maxi autoris&eacute; par la base de donn&eacute;es</td>
+    <td>texte du message</td>
+  </tr>
+  <tr> 
+    <td>auteur</td>
+    <td>50 caract&egrave;res maxi</td>
+    <td>nom de l'auteur</td>
+  </tr>
+  <tr> 
+    <td>date</td>
+    <td>10 caract&egrave;res maxi</td>
+    <td>date de post du message</td>
+  </tr>
+  <tr> 
+    <td>mail</td>
+    <td>100 caract&egrave;res maxi</td>
+    <td>adresse e-mail</td>
+  </tr>
+  <tr> 
+    <td>sujet</td>
+    <td>100 caract&egrave;res maxi</td>
+    <td>titre de la question</td>
+  </tr>
+  <tr> 
+    <td>envoi</td>
+    <td>3 caract&egrave;res (oui ou non)</td>
+    <td>sdsdsd</td>
+  </tr>
+  <tr> 
+    <td>date_reelle</td>
+    <td>fix&eacute; par la base de donn&eacute;es</td>
+    <td>date de derni&egrave;re lecture ou r&eacute;ponse</td>
+  </tr>
+</table>
+<br>
+<table border="1" cellspacing="2" cellpadding="0">
+  <tr> 
+    <td colspan="3">Table contenant les r&eacute;ponses</td>
+  </tr>
+  <tr> 
+    <td><b>champs</b></td>
+    <td><b>taille</b></td>
+    <td><b>fonction</b></td>
+  </tr>
+  <tr> 
+    <td>id</td>
+    <td>8 caract&egrave;res maxi</td>
+    <td>identificateur de la question</td>
+  </tr>
+  <tr> 
+    <td>texte</td>
+    <td>longueur maxi autoris&eacute; par la base de donn&eacute;es</td>
+    <td>texte du message</td>
+  </tr>
+  <tr> 
+    <td>auteur</td>
+    <td>50 caract&egrave;res maxi</td>
+    <td>nom de l'auteur</td>
+  </tr>
+  <tr> 
+    <td>date</td>
+    <td>10 caract&egrave;res maxi</td>
+    <td>date de post du message</td>
+  </tr>
+  <tr> 
+    <td>mail</td>
+    <td>100 caract&egrave;res maxi</td>
+    <td>adresse e-mail</td>
+  </tr>
+  <tr> 
+    <td>date_reelle</td>
+    <td>fix&eacute; par la base de donn&eacute;es</td>
+    <td>date de derni&egrave;re lecture ou r&eacute;ponse</td>
+  </tr>
+</table>
+<br>
+<h1>7 - Mise &agrave; jour manuelle<a name="7"></a></h1>
+La mise &agrave; jour manuelle comporte plusieurs &eacute;tapes. Dans un premier 
+temps, il va falloir extraire les donn&eacute;es de l'ancien config.php pour le 
+remettre dans le nouveau et dans les fichiers ajout&eacute;s. <br>
+<h2>7.1 - Configuration du site<a name="71"></a></h2>
+Le fichier config.php c'est largement all&egrave;g&eacute; pour ne contenir que 
+ce qui concerne le site. Ainsi, la censure, les smileys et BBCode ont &eacute;t&eacute; 
+s&eacute;par&eacute;s. On y trouve maintenant que les donn&eacute;es exliquz dans 
+<a href="#21">2.1 - Configuration</a>.<br>
+<h2>7.2 - Smileys<a name="72"></a></h2>
+Pour les smileys, il suffit de recopier le tableau $smiley dans le fichier <b>include/smileys.php</b>. 
+<br>
+<h2>7.3 - BBCode<a name="73"></a></h2>
+Comme pour les smileys, il suffit de recopier le tableau $bbcode dans le fichier 
+<b>include/bbcode.php</b>. <br>
+<h2>7.4 - Censure<a name="74"></a></h2>
+Recopier le tableau $censure et la viarable $texte_a_inserer dans le fichier <b>include/censure.php</b>. 
+<br>
+<h2>7.5 - E-mail<a name="75"></a></h2>
+La personnalisation de l'e-mail envoy&eacute; automatiquement se fait en suivant 
+le chapitre <a href="#55">5.5 - Personnalisation de l'e-mail envoyé automatiquement</a>. 
+<br>
+<h2>7.6 - Mise &agrave; jour de la base de donn&eacute;es<a name="76"></a></h2>
+Pour mettre &agrave; jour votre base de donn&eacute;es, ex&eacute;cuter les quatre 
+requ&ecirc;tes suivantes :<br>
+<pre>
+UPDATE <b><i>prefixe_</i></b>question SET envoi='1' WHERE envoi='oui';
+UPDATE <b><i>prefixe_</i></b>question SET envoi='0' WHERE envoi='non';
+ALTER TABLE <b><i>prefixe_</i></b>question CHANGE `envoi` `envoi` TINYINT(1) NOT NULL;  
+ALTER TABLE <b><i>prefixe_</i></b>reponse ADD `envoi` TINYINT(1) DEFAULT '0' NOT NULL;  
+</pre>
+<h1>8 - Mise &agrave; jour automatiquement<a name="8"></a></h1>
+Pour mettre à jour NFAQ 1.X vers <b>NouveauMonoForum</b>, il suffit de supprimer 
+les fichiers pr&eacute;sents dans la racines : forum.php, aide.php, fonctions.php, 
+recherche.php, mais <b>surtout pas config.php</b> !!! Vous pouvez supprimer aussi 
+tous les fichiers dans le r&eacute;pertoire include/. Ensuite copier tous les 
+fichiers de NouveauMonoForum sur votre serveur. Ensuite, lancer le script http://monsite.com/repertoire_nouveau_mono_forum/install/.<br>
+Apr&egrave;s avoir passer l'&eacute;cran d'accueil et acc&egrave;pt&eacute; la 
+licence, cliquez sur <b>Mettre &agrave; jour NAFQ 1.X vers NouveauMonoForum</b>.<br>
+Maintenant, un &eacute;cran demandant si vous voulez sauvegarder les divers fichiers 
+modifi&eacute;s et de choisir le th&egrave;me se pr&eacute;sente.<br>
+Vous pouvez uniquement sauvegarder le fichier config.php, le reste dans le cardre 
+d'une mise &agrave; jour n'est pas tr&egrave;s int&eacute;ressant. 
+<h1>9 - Variables GET<a name="9"></a></h1>
+<table border="1" cellpadding="2">
+  <tr> 
+    <td><b>Nom variable</b></td>
+    <td><b>Description</b></td>
+  </tr>
+  <tr> 
+    <td>x</td>
+    <td>num&eacute;ro de la page en cours dans la liste des sujet pr&eacute;sent 
+      dans la base.</td>
+  </tr>
+  <tr> 
+    <td>y</td>
+    <td>num&eacute;ro de la page en cours dans la liste des r&eacute;ponses au 
+      sujet vision&eacute; ou &agrave; la recherche lanc&eacute;.</td>
+  </tr>
+  <tr> 
+    <td>sens</td>
+    <td>sens du classement de la liste des sujets. 0 = croissant, 1 = d&eacute;croissant</td>
+  </tr>
+  <tr> 
+    <td>classement</td>
+    <td>indique comment est class&eacute;e la liste des sujets. 0 = date,1 = auteur, 
+      2 = sujet, 3 = date de derni&egrave;re lecture/r&eacute;ponse</td>
+  </tr>
+  <tr> 
+    <td>aide</td>
+    <td>1 = afficher l'aide</td>
+  </tr>
+  <tr> 
+    <td>rechercher</td>
+    <td>1 = affiche le formulaire de recherche</td>
+  </tr>
+  <tr> 
+    <td>newpost</td>
+    <td>1 = afficher formulaire pour ajouter un sujet</td>
+  </tr>
+  <tr> 
+    <td>licence</td>
+    <td>1 = affiche la licence</td>
+  </tr>
+  <tr> 
+    <td>id</td>
+    <td>id du message concern&eacute;</td>
+  </tr>
+  <tr> 
+    <td>titre</td>
+    <td>titre du message concern&eacute;. Sert uniquement pour all&egrave;ger 
+      les requ&ecirc;tes SQL pour conna&icirc;tre le titre du sujet. N'ai utilis&eacute; 
+      que pour l'affichage et n'interface pas avec la base de donn&eacute;es.</td>
+  </tr>
+  <tr>
+    <td>voirsujet</td>
+    <td>1 = affiche le dont l'id est pass&eacute; en param&egrave;tre</td>
+  </tr>
+  <tr> 
+    <td>repondre</td>
+    <td>1 = afficher forumaire pour ajouter un r&eacute;ponse &agrave; un sujet</td>
+  </tr>
+</table>
+<br>
+</body>
+</html>
