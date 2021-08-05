@@ -4,7 +4,7 @@
  *
  * Nouvelle foire aux question.
  *
- * Version 1.2
+ * Version 1.2.1
  *
  * Voici un forum qui ne tient que sur un seul fichier. Ultra rapide, simple a 
  * mettre en place. Les urls sont cliquables, la personne qui pose une question
@@ -29,8 +29,9 @@
  * Place, Suite 330, Boston, MA 02111-1307 USA
  *
  ******************************************************************************
-
-Bubule le 21/08/2003 : (version 1)
+VERSION 1
+=========
+Bubule le 21/08/2003 :
   - formatage du code source,
   - suppression de \" au profit de '
   - mise en fonction du cliquage de lien,
@@ -74,7 +75,9 @@ Bubule le 26/03/2003 :
   - gestion des smileys,
   - install automatique.
 
-Bubule le 14/11/2003 : (version 1.2)
+VERSION 1.2
+===========
+Bubule le 14/11/2003 :
   - possibilité de ne pas supprimer les messages,
   - affecte une valeur par défaut à la variable $x,
   - ajout d'icône,
@@ -92,10 +95,27 @@ Bubule le 17/11/2003 :
   - Possibilité de classer la liste des message,
   - Optimize juste les tables ou il y a eu suppressions,
   - Documenter CSS.
+
+VERSION 1.2.1
+=============
+Bubule le 25/11/2003 :
+  - ENORME oubli de set_magic_quotes_runtime(0);,
+  - correction un bug (inversion de deux ligne de code) qui provovoquait un non
+    affichage du forum et représente un trou de sécurité.
+
+Bubule le 27/11/2003
+  - multi-page pour les réponse,
+  - modification de la gestion du classement/sens des questions,
+  - personnaliser le message envoyé suite à une réponse,
 */
 
 
 // TODO :
+// - convertir l'enregistrement envoi en 0/1 au lieu de oui/non et donc diminuer
+//   la taille de l'enregistrement,
+// - ajouter l'envoi au non d'un e-mail s'il y a eu une réponse et qu'on a
+//   répondu,
+//
 // - Simplifier l'installation et la configuration
 // - Possibilité d'avoir des utilisateurs, modérateurs, administrateurs,
 // - Pouvoir configurer la lecture et l'écriture -> privé, publique,
@@ -120,7 +140,7 @@ if(isset($HTTP_POST_VARS['adresse']))
 
 include("fonctions.php") ;
 
-// Numéro de la page
+// Numéro de la page question
 if (isset($HTTP_POST_VARS['x']))
 {
     $x = gpcAddSlashes($HTTP_POST_VARS['x']) ;
@@ -132,6 +152,37 @@ else if (isset($HTTP_GET_VARS['x']))
 else
 {
     $x = 0 ;
+}
+
+// Numéro de la page réponse
+if (isset($HTTP_POST_VARS['y']))
+{
+    $y = gpcAddSlashes($HTTP_POST_VARS['y']) ;
+}
+else
+{
+    $y = 0 ;
+}
+
+if (isset($HTTP_POST_VARS["repondre"]) && !isset($HTTP_POST_VARS["quest_reponse"]) && !isset($HTTP_POST_VARS["retour_forum"]))
+{
+    $HTTP_GET_VARS["repondre"] = 1 ;
+}
+
+// Tri de l'ordre des questions
+if ((isset($HTTP_GET_VARS["classement"]) || isset($HTTP_GET_VARS["sens"])) && !isset($HTTP_POST_VARS["trier"]))
+{
+    // Afin de ne pas tout recoder, on fait un p'tit subterfuge
+    $HTTP_POST_VARS["trier"] = 1 ;
+    $HTTP_POST_VARS["classement"] = $HTTP_GET_VARS["classement"] ;
+    $HTTP_POST_VARS["sens"] = $HTTP_GET_VARS["sens"] ;
+}
+else if (!isset($HTTP_POST_VARS["trier"]))
+{
+    $classement = "date_reelle" ;
+    $HTTP_POST_VARS["classement"] = 3 ;
+    $sens = " desc" ;
+    $HTTP_POST_VARS["sens"] = 1 ;
 }
 
 if (isset($HTTP_POST_VARS["trier"]))
@@ -158,20 +209,7 @@ if (isset($HTTP_POST_VARS["trier"]))
         default : $sens = "desc" ;
     }
 }
-else if  (isset($HTTP_GET_VARS["classement"]) || isset($HTTP_GET_VARS["sens"]))
-{
-    // Afin de ne pas tout recoder, on fait un p'tit subterfuge
-    $HTTP_POST_VARS["trier"] = 1 ;
-    $HTTP_POST_VARS["classement"] = $HTTP_GET_VARS["classement"] ;
-    $HTTP_POST_VARS["sens"] = $HTTP_GET_VARS["sens"] ;
-}
-else
-{
-    $classement = "date_reelle" ;
-    $HTTP_POST_VARS["classement"] = 3 ;
-    $sens = " desc" ;
-    $HTTP_POST_VARS["sens"] = 1 ;
-}
+
 
 
     ?>
@@ -186,6 +224,8 @@ else
     </head>
     <body>
   <?php
+    // "Magic Quotes". NE PAS MODIFIER !!!
+    set_magic_quotes_runtime(0);
 
     // Connextion à la base de donnée
     $my_sql = @mysql_connect($host,$user,$pw) or die(mysql_error()) ;
@@ -275,7 +315,7 @@ else
         if (!empty($texte)&& !empty($auteur))
         {
             // Régarde s'il y a un retour par e-mail
-            $res = @mysql_query("SELECT envoi, mail FROM " . $prefixe_de_table . "question WHERE id='$id'") ;
+            $res = @mysql_query("SELECT envoi, mail, sujet FROM " . $prefixe_de_table . "question WHERE id='$id'") ;
             $row = @mysql_fetch_array($res) ;
 
             if (($row["envoi"] == "oui") && !empty($row["mail"]) && $can_send_email)
@@ -292,11 +332,16 @@ else
                     $email = $row["mail"] ;
                 }
 
-                $mailSubject = "Reponse du forum." ;
-                $mailBody = "$auteur vous répond :\n" ;
-                $mailBody .= "$texte\n" ;
-                $mailBody .= $adresse ;
-                $ok = mail($email, $mailSubject, $mailBody) ;
+                // Remplacement de l'adresse
+                $texteEmail = eregi_replace("{ ADRESSE_AUTEUR }", $adresse, $texteEmail) ;
+                // Remplacement du texte
+                $texteEmail = eregi_replace("{ TEXTE }", $texte, $texteEmail) ;
+                // Remplacement de l'auteur
+                $texteEmail = eregi_replace("{ AUTEUR }", $auteur, $texteEmail) ;
+                // Remplacement du sujet
+                $texteEmail = eregi_replace("{ QUESTION }", $row["sujet"], $texteEmail) ;
+
+                $ok = mail($email, $subjectEmail, $texteEmail) ;
             }
 
             $date = date("d-m-Y") ;
@@ -323,12 +368,25 @@ else
      */
     if (isset($HTTP_GET_VARS["repondre"]))
     {
+        if (isset($HTTP_GET_VARS["id"]))
+        {
+            $id = $HTTP_GET_VARS["id"] ;
+        }
+        else if (isset($HTTP_POST_VARS["id"]))
+        {
+            $id = $HTTP_POST_VARS["id"] ;
+        }
+        else
+        {
+            die("** ERREUR ** L'id provient d'une source impr&eacute;vue !!!") ;
+        }
+
         // Met à jour sa date réelle
-        @mysql_query("UPDATE " . $prefixe_de_table . "question SET date_reelle=now() WHERE id='" . $HTTP_GET_VARS["id"] . "' ") ;
+        @mysql_query("UPDATE " . $prefixe_de_table . "question SET date_reelle=now() WHERE id='$id'") ;
 
-        $res = @mysql_query("select * from " . $prefixe_de_table . "question where id like '" . $HTTP_GET_VARS["id"] . "' ") ;
+        $res = @mysql_query("select * from " . $prefixe_de_table . "question where id='$id' ") ;
 
-        echo "<table width='$width' border='0' align='center'>" ;
+        echo "<table width='$width' border='0' align='center' cellspacind='0' cellpadding='2'>" ;
 
         while ($row = @mysql_fetch_array($res))
         {
@@ -350,7 +408,59 @@ else
             echo "</td></tr>" ;
         }
 
-        $res2 = @mysql_query("select * from " . $prefixe_de_table . "reponse where id like '" . $HTTP_GET_VARS["id"] . "'");
+        $res2 = @mysql_query("select * from " . $prefixe_de_table . "reponse where id='$id'");
+
+        $tot = @mysql_num_rows($res2) ;
+        @mysql_free_result($res2) ;
+
+        $page_tot = ceil($tot / $nb_post_par_page);
+
+        if ($page_tot == 0)
+        {
+            $page_tot = 1 ;
+        }
+        else
+        {
+            $page_tot = $page_tot ;
+        }
+
+        // Vérifie qu'il s'agit bien d'un chiffre
+        if (!is_numeric($y))
+        {
+            $y = 0 ;
+        }
+
+        // Si on a demandé la page précédante
+        if (isset($HTTP_POST_VARS["moins"]) && ($y > 0))
+        {
+            $y -= $nb_post_par_page ;
+        }
+
+        // Si on a demandé la page précédante
+        if (isset($HTTP_POST_VARS["plus"]) && (($y + $nb_post_par_page) <= $tot))
+        {
+            $y += $nb_post_par_page ;
+        }
+
+        // 1erer page
+        if (isset($HTTP_POST_VARS["debut"]))
+        {
+            $y = 0 ;
+        }
+
+        // Derniere page
+        if (isset($HTTP_POST_VARS["fin"]))
+        {
+            $y = $tot - $nb_post_par_page ;
+        }
+
+        // Page XXX
+        if (isset($HTTP_POST_VARS["direct_valid"]) && is_numeric($HTTP_POST_VARS["direct"]))
+        {
+            $y = $HTTP_POST_VARS["direct"] ;
+        }
+
+        $res2 = @mysql_query("select * from " . $prefixe_de_table . "reponse where id='$id' limit $y, $nb_post_par_page");
 
         $color1 = "ligneRéponseDevellopeImpaire" ;
         $color2 = "ligneRéponseDevellopePaire" ;
@@ -381,6 +491,48 @@ else
             }
         }
 
+        echo "</table><br><table border='0' cellspacing='0' cellpadding='2' align='center'><tr><td valign='top'>" ;
+
+        if ($y > 0)
+        {
+            echo "<input type='Submit' value='&lt;&lt; D&eacute;but' name='debut'>&nbsp;" ;
+            echo "<input type='Submit' value='&lt; Pr&eacute;c&eacute;dant' name='moins'>" ;
+        }
+        else
+        {
+            echo "&nbsp;" ;
+        }
+
+        echo "</td><td valign='top' align='center' nowrap>Page " .
+             (ceil($y / $nb_post_par_page) + 1) . "/$page_tot" .
+             "</td><td valign='top' align='right'>" ;
+
+        if ((ceil($y / $nb_post_par_page) + 1) < $page_tot)
+        {
+            echo "<input type='submit' value=' Suivant &gt;' name='plus'>&nbsp;" ;
+            echo "<input type='Submit' value='Fin &gt;&gt;' name='fin'>" ;
+        }
+        else
+        {
+            echo "&nbsp;" ;
+        }
+
+        echo "<input type='hidden' name='y' value='$y'><input type='hidden'" .
+             " name='total' value='$tot'><input type='hidden' name='repondre'" .
+             " value='1'><input type='hidden' name='id' value='$id'>" ;
+
+        echo "</td></tr><tr><td colspan='3' align='center' nowrap>" ;
+        echo "Allez directement &agrave; la page <select name='direct'>" ;
+
+        for ($i = 0; $i < $page_tot; $i++)
+        {
+            echo "<option value='" . $i * $nb_post_par_page . "'>". ($i + 1) . "</option>" ;
+        }
+
+        echo "</select>&nbsp;<input type='Submit' name='direct_valid' value='Go'></td></tr></table>" ;
+
+        echo "<table width='$width' border='0' align='center' cellspacind='0' cellpadding='2'>" ;
+
         echo "<input type='hidden' value='$id' name='id'>" ;
         echo "<tr><td colspan='2' align='center'><b>Répondre</td><tr>" ;
         echo "<td align='right'><b>Auteur : </b></td><td><input type='text'" .
@@ -400,7 +552,7 @@ else
 
         echo "<input name='invisible' type='checkbox'> Ne pas rendre mon adresse e-mail publique.<br>" ;
         echo "<br><input type='submit' value='Poster le sujet' name='quest_reponse'>&nbsp;" ;
-        echo "<input type='hidden' name='x' value='" . htmlentities($x) . "'><input type='submit' value='Retour au forum'>" ;
+        echo "<input type='hidden' name='x' value='" . htmlentities($x) . "'><input type='submit' value='Retour au forum' name='retour_forum'>" ;
         echo "<hr width='50%'>" ;
     }
 

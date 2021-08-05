@@ -17,7 +17,7 @@
     // CONFIGURATION DU FORUM
     ///////////////////////////////////////////////////////////////////////////
     // Nombre de question affichée par page
-    $nb_post_par_page = 10 ;
+    $nb_post_par_page = 1 ;
     // Nombre de jour sans lecture avant suppression d'un question
     // si supperieur à 0 suppression. Sinon pas de suppression des messages
     $nb_jour_avant_suppression = -1 ;
@@ -41,6 +41,15 @@
     $nb_rep_pr_msg_hot = 25 ;
     // Indique la taille des barres et du tableau
     $width = "76%" ;
+    // Objet de l'e-mail envoyé quand il y a une réponse
+    $subjectEmail = "Reponse au forum NFAQ 1.2.1" ;
+    // Texte envoyé dans l'e-mail.
+    // { ADRESSE_AUTEUR } = adresse de l'auteur de la question
+    // { TEXTE } = réponse
+    // { AUTEUR } = auteur de la réponse
+    // { QUESTION } = question posée
+    $texteEmail = "Bonjour,\n\nvous recevez cet e-mail car vous avez posez la question { QUESTION } sur le forum NFAQ 1.2.1.\n{ AUTEUR } vous &agrave; r&eacute;pondu :\n{ TEXTE }\n\nVous pouvez directement lui r&eacute;pondre &agrave; l'adresse { ADRESSE_AUTEUR }" ;
+
 
     ///////////////////////////////////////////////////////////////////////////
     // Gestion des smiley
