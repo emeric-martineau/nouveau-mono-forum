@@ -4,11 +4,11 @@
  *
  * Nouvelle foire aux question.
  *
- * Version 1.0
+ * Version 1.2
  *
  * Voici un forum qui ne tient que sur un seul fichier. Ultra rapide, simple a 
  * mettre en place. Les urls sont cliquables, la personne qui pose une question
- * peut recevoir directement un mel pour chaque reponse. Les message sont
+ * peut recevoir directement un e-mail pour chaque reponse. Les messages sont
  * nettoyer tous les X jours. Vous avez besoin d'une base Mysql. On peut déposer
  * du code php sans risque.
  *
@@ -31,27 +31,29 @@
  ******************************************************************************/
 // Inclu le fichier de configuration
 include("config.php") ;
-?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-    <title><?php echo $titre_forum ; ?></title>
-    <meta name="keywords" content=""><meta name="author" content="Bruno Castagné">
-    <meta name="author" content="Bubule">
-    <LINK href="<?php echo $fichier_css ; ?>" type=text/css rel="STYLESHEET">
-</head>
 
-<body>
-<center><h1><?php echo $titre_forum ; ?></h1><hr width='76%'>
-  <b>Aide</b>
-<hr width='76%'></center><br>
-<h2>1 - Présentation</h2>
-<?php echo $titre_forum ; ?>&nbsp;est une sorte de foire aux questions o&ugrave;
-tout le monde peut d&eacute;poser (anonymement s'il le souhaite) une question,
-qui sera supprim&eacute;e automatiquement tous les <?php echo $nb_jour_avant_suppression ; ?>
-&nbsp;jours apr&egrave;s qu'une question n'est plus &eacute;t&eacute; lue. Tout le monde
-peut la consulter et y r&eacute;pondre.<br>
+    ?>
+    <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+    <html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+        <title><?php echo $titre_forum ; ?></title>
+        <meta name="keywords" content=""><meta name="author" content="Bruno Castagné">
+        <meta name="author" content="Bubule">
+        <LINK href="<?php echo $fichier_css ; ?>" type=text/css rel="STYLESHEET">
+    </head><body>
+<?php
+
+
+echo "<center><h1>$titre_forum</h1><hr width='$width'><b>Aide</b><hr width='$width'></center><br><h2>1 - Pr&eacute;sentation</h2>" ;
+
+echo $titre_forum ; ?>&nbsp;est une sorte de foire aux questions o&ugrave;
+tout le monde peut d&eacute;poser (anonymement s'il le souhaite) une question<?php if ($nb_jour_avant_suppression > 0)
+{?>
+, qui sera supprim&eacute;e automatiquement tous les <?php echo $nb_jour_avant_suppression ; ?> &nbsp;jours apr&egrave;s qu'une question n'est plus &eacute;t&eacute; lue
+<?php
+}
+?>. Tout le monde peut la consulter et y r&eacute;pondre.<br>
 Si vous entrez une adresse URL dans le corps du message, un lien sera automatiquement
 cr&eacute;&eacute;. Vous pouvez aussi ins&eacute;rer des smiley ou du BBCode (pour les
 codes, voir la liste des smiley et BBCode ci-apr&egrave;s).<br>
@@ -93,8 +95,10 @@ un cookie d&eacute;pos&eacute; sur votre ordinateur.<br>
   }
   ?>
 </table>
+<h2>4 - Moteur de recherche</h2>
+Le moteur de recherche effectue une recherche sur toute la base sur l'auteur et/ou 
+sur le titre et le texte. La recherche ne tient pas compte de la case et on ne 
+peut que rechercher un bout de texte (pas de possibilit&eacute; de chercher tel 
+mot et tel mot).<br>
 <br>
-<br>
-<a href='<?php echo $url_site . $SCRIPTNAME ; ?>'>Retour au site &gt;&gt;</a>
-</body>
-</html>
+<a href='<?php echo $url_site . $SCRIPTNAME . "?sens=" . $HTTP_GET_VARS["sens"] . "&classement=" . $HTTP_GET_VARS["classement"]; ?>'>Retour au site &gt;&gt;</a></body></html>

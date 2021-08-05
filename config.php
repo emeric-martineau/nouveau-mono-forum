@@ -17,9 +17,10 @@
     // CONFIGURATION DU FORUM
     ///////////////////////////////////////////////////////////////////////////
     // Nombre de question affichée par page
-    $nb_post_par_page = 3 ;
+    $nb_post_par_page = 10 ;
     // Nombre de jour sans lecture avant suppression d'un question
-    $nb_jour_avant_suppression = 60 ;
+    // si supperieur à 0 suppression. Sinon pas de suppression des messages
+    $nb_jour_avant_suppression = -1 ;
     // Nom du forum
     $titre_forum = "La foire aux questions" ;
     // Url du forum. NE PAS OUBLIER LE / FINAL !!!
@@ -29,11 +30,17 @@
     // Fichier CSS
     $fichier_css = $url_site . "style.css" ;
     // Indique s'il faut afficher les réponse dans la liste (true ou false)
-    $afficher_reponse_dans_liste = false ;
+    $afficher_reponse_dans_liste = true ;
     // Indique s'il est possible de recevoir un e-mail
     $can_send_email = true ;
     // Nom du fichier affichant le forum
     $SCRIPTNAME = "forum.php" ;
+    // Aficher les images dans la liste des message. true = oui, false = non
+    $afficher_icone = true ;
+    // Nombre de réponse pour qu'un message soit populaire
+    $nb_rep_pr_msg_hot = 25 ;
+    // Indique la taille des barres et du tableau
+    $width = "76%" ;
 
     ///////////////////////////////////////////////////////////////////////////
     // Gestion des smiley

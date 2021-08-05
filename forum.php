@@ -4,11 +4,11 @@
  *
  * Nouvelle foire aux question.
  *
- * Version 1.0
+ * Version 1.2
  *
  * Voici un forum qui ne tient que sur un seul fichier. Ultra rapide, simple a 
  * mettre en place. Les urls sont cliquables, la personne qui pose une question
- * peut recevoir directement un mel pour chaque reponse. Les message sont
+ * peut recevoir directement un e-mail pour chaque reponse. Les messages sont
  * nettoyer tous les X jours. Vous avez besoin d'une base Mysql. On peut déposer
  * du code php sans risque.
  *
@@ -30,14 +30,14 @@
  *
  ******************************************************************************
 
-Bubule le 21/08/2003 :
+Bubule le 21/08/2003 : (version 1)
   - formatage du code source,
   - suppression de \" au profit de '
   - mise en fonction du cliquage de lien,
   - ajout de @ devant les fonctions de BDD.
   - suppression de l'envoie de message directe pour éviter les spam,
   - vérification des données venant du formulaire vers la base de données,
-  - adressage des varaibles des formulaires par HTTP_*_VARS,
+  - adressage des variables des formulaires par HTTP_*_VARS,
   - suppression de javascript,
   - gestion de l'affichage des boutons suivant et précédant,
   - personnalisation du nombre de message par page.
@@ -72,13 +72,36 @@ Bubule le 26/03/2003 :
   - ajout d'un bouton << Début et Fin >>,
   - ajout d'une liste pour allez directement à une page,
   - gestion des smileys,
-  - install automatique
+  - install automatique.
+
+Bubule le 14/11/2003 : (version 1.2)
+  - possibilité de ne pas supprimer les messages,
+  - affecte une valeur par défaut à la variable $x,
+  - ajout d'icône,
+  - correction d'une ENORME erreur qui autorisait l'envoie d'e-mail alors
+    que la fonction est désactivé.
+  - Possibilité d'effectuer une recherche avec gestion multi page,
+  - possibilité de configurer la largeur du site,
+  - suppression de .... dans les sujets,
+  - correction d'un bug qui fait qu'il ne détectait pas toujours que la fonction
+    mail() était désactivé,
+  - les saut de ligne physique de le texte entré sont pris en compte et sont
+    convertis en saut HTML.
+
+Bubule le 17/11/2003 :
+  - Possibilité de classer la liste des message,
+  - Optimize juste les tables ou il y a eu suppressions,
+  - Documenter CSS.
 */
 
 
 // TODO :
-// - pouvoir filtrer par auteur, date...
-// - Pouvoir effectuer une recherche
+// - Simplifier l'installation et la configuration
+// - Possibilité d'avoir des utilisateurs, modérateurs, administrateurs,
+// - Pouvoir configurer la lecture et l'écriture -> privé, publique,
+// - Gestion des smileys et BBCode par base de données
+// - possibilité de limité la taille de l'enregistrement,
+// - possibilité de limité la taille du texte,
 
 
 // Inclu le fichier de configuration
@@ -97,70 +120,147 @@ if(isset($HTTP_POST_VARS['adresse']))
 
 include("fonctions.php") ;
 
-// Calcule de la page
+// Numéro de la page
 if (isset($HTTP_POST_VARS['x']))
 {
     $x = gpcAddSlashes($HTTP_POST_VARS['x']) ;
 }
-else
+else if (isset($HTTP_GET_VARS['x']))
 {
     $x = $HTTP_GET_VARS['x'] ;
 }
+else
+{
+    $x = 0 ;
+}
 
-?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-    <title><?php echo $titre_forum ; ?></title>
-    <meta name="keywords" content=""><meta name="author" content="Bruno Castagné">
-    <meta name="author" content="Bubule">
-    <LINK href="<?php echo $fichier_css ; ?>" type=text/css rel="STYLESHEET">
-</head>
+if (isset($HTTP_POST_VARS["trier"]))
+{
+    switch($HTTP_POST_VARS["classement"])
+    {
+        case 0 : $classement = "date" ;
+                 break ;
+        case 1 : $classement = "auteur" ;
+                 break ;
+        case 2 : $classement = "sujet" ;
+                 break ;
+        case 3 : $classement = "date_reelle" ;
+                 break ;
+        default : $classement = "date_reelle" ;
+    }
 
-<body>
+    switch ($HTTP_POST_VARS["sens"])
+    {
+        case 0 : $sens = "asc" ;
+                 break ;
+        case 1 : $sens = "desc" ;
+                 break ;
+        default : $sens = "desc" ;
+    }
+}
+else if  (isset($HTTP_GET_VARS["classement"]) || isset($HTTP_GET_VARS["sens"]))
+{
+    // Afin de ne pas tout recoder, on fait un p'tit subterfuge
+    $HTTP_POST_VARS["trier"] = 1 ;
+    $HTTP_POST_VARS["classement"] = $HTTP_GET_VARS["classement"] ;
+    $HTTP_POST_VARS["sens"] = $HTTP_GET_VARS["sens"] ;
+}
+else
+{
+    $classement = "date_reelle" ;
+    $HTTP_POST_VARS["classement"] = 3 ;
+    $sens = " desc" ;
+    $HTTP_POST_VARS["sens"] = 1 ;
+}
+
+
+    ?>
+    <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+    <html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+        <title><?php echo $titre_forum ; ?></title>
+        <meta name="keywords" content=""><meta name="author" content="Bruno Castagné">
+        <meta name="author" content="Bubule">
+        <LINK href="<?php echo $fichier_css ; ?>" type=text/css rel="STYLESHEET">
+    </head>
+    <body>
   <?php
+
     // Connextion à la base de donnée
     $my_sql = @mysql_connect($host,$user,$pw) or die(mysql_error()) ;
     // Sélectionne la base
     @mysql_select_db("$db") or die(mysql_error()) ;
 
     // Affiche le forum
-    echo "<center><h1>$titre_forum</h1><hr width='76%'>" ;
-    echo "<a href='" . $url_site . $SCRIPTNAME .  "?newpost=1&x=" .
-         urlencode($x) . "'><img src='" . $url_site . "images/new.gif'" .
-         "alt='Nouveau sujet' border='0' align='absmiddle'> Nouveau sujet</a>" .
-         " | <a href='" . $url_site . "aide.php'><img src='" . $url_site .
-         "images/aide.gif' alt='aide' border='0' align='absmiddle'> Aide</a>" ;
+    echo "<center><h1>$titre_forum</h1><hr width='$width'>" ;
+    echo "<a href='" . $url_site . $SCRIPTNAME .  "?newpost=1&x=" . urlencode($x) . "&sens=" . $HTTP_POST_VARS["sens"] . "&classement=" . $HTTP_POST_VARS["classement"] . "'>" ;
+
+    if ($afficher_icone)
+    {
+        echo "<img src='" . $url_site . "images/new.gif' alt='Nouveau sujet' border='0' align='absmiddle'>" ;
+    }
+
+    echo " Nouveau sujet</a> | <a href='" . $url_site . "aide.php?sens=" . $HTTP_POST_VARS["sens"] . "&classement=" . $HTTP_POST_VARS["classement"] . "'>" ;
+
+    if ($afficher_icone)
+    {
+        echo "<img src='" . $url_site . "images/aide.gif' alt='aide' border='0' align='absmiddle'> " ;
+    }
+
+    echo "Aide</a> | <a href='" . $url_site . "recherche.php?sens=" . $HTTP_POST_VARS["sens"] . "&classement=" . $HTTP_POST_VARS["classement"] . "'>" ;
+
+    if ($afficher_icone)
+    {
+        echo "<img src='" . $url_site . "images/search.gif' alt='Recherche' border='0' align='absmiddle'>" ;
+    }
+
+    echo " Rechercher</a>" ;
 
     if (!empty($url_de_retour))
     {
-        echo " | <a href='$url_de_retour'><img src='" . $url_site . "images/quitter.gif'".
-             " alt='Quitter' align='absmiddle' border='0'> Quitter le forum</a>" ;
+        echo " | <a href='$url_de_retour'>" ;
+
+        if ($afficher_icone)
+        {
+            echo "<img src='" . $url_site . "images/quitter.gif' alt='Quitter' align='absmiddle' border='0'> " ;
+        }
+
+        echo "Quitter le forum</a>" ;
     }
 
-    echo "<hr width='76%'>" ;
+    echo "<hr width='$width'>" ;
 
-    echo "<form action='" . $url_site . $SCRIPTNAME . "' method='post'>" ;
+    echo "<form action='" . $url_site . $SCRIPTNAME . "?sens=" . $HTTP_POST_VARS["sens"] . "&classement=" . $HTTP_POST_VARS["classement"] . "' method='post'>" ;
 
     // Efface les questions et les réponses non lues depuis X jours
     // 1° Releve les id des message
-    $my_question = "SELECT id FROM ". $prefixe_de_table . "question WHERE TO_DAYS(NOW()) - TO_DAYS(date_reelle) >= $nb_jour_avant_suppression" ;
-    $res = @mysql_query($my_question) ;
-
-    // 2° Suppression des messages et de leur reponse
-    while ($row = @mysql_fetch_array($res))
+    if ($nb_jour_avant_suppression > 0)
     {
-        $my_question = "DELETE FROM " . $prefixe_de_table . "question WHERE id='" . $row["id"] . "'" ;
-        @mysql_query($my_question) ;
+        $res = @mysql_query("SELECT id FROM ". $prefixe_de_table . "question WHERE TO_DAYS(NOW()) - TO_DAYS(date_reelle) >= $nb_jour_avant_suppression") ;
 
-        $my_question = "DELETE FROM " . $prefixe_de_table . "reponse WHERE id='" . $row["id"] . "'" ;
-        @mysql_query($my_question) ;
+        $optimise = false ;
+
+        // 2° Suppression des messages et de leurs reponses
+        while ($row = @mysql_fetch_array($res))
+        {
+            $nb_question = @mysql_query("DELETE FROM " . $prefixe_de_table . "question WHERE id='" . $row["id"] . "'") ;
+
+            $nb_reponse = @mysql_query("DELETE FROM " . $prefixe_de_table . "reponse WHERE id='" . $row["id"] . "'") ;
+
+            if ($nb_question || $nb_reponse)
+            {
+                $optimise = true ;
+            }
+        }
+
+        if ($optimise)
+        {
+            // Optimisation de la base de données
+            @mysql_query("OPTIMIZE TABLE " . $prefixe_de_table . "reponse") ;
+            @mysql_query("OPTIMIZE TABLE " . $prefixe_de_table . "question") ;
+        }
     }
-
-    // Optimisation de la base de données
-    @mysql_query("OPTIMIZE TABLE " . $prefixe_de_table . "reponse") ;
-    @mysql_query("OPTIMIZE TABLE " . $prefixe_de_table . "question") ;
 
     /*
      * Enregistre la réponse
@@ -175,8 +275,7 @@ else
         if (!empty($texte)&& !empty($auteur))
         {
             // Régarde s'il y a un retour par e-mail
-            $my = "SELECT envoi, mail FROM " . $prefixe_de_table . "question WHERE id='$id'" ;
-            $res = @mysql_query($my) ;
+            $res = @mysql_query("SELECT envoi, mail FROM " . $prefixe_de_table . "question WHERE id='$id'") ;
             $row = @mysql_fetch_array($res) ;
 
             if (($row["envoi"] == "oui") && !empty($row["mail"]) && $can_send_email)
@@ -208,8 +307,7 @@ else
                 $adresse = "@" . $adresse ;
             }
 
-            $my = "insert into " . $prefixe_de_table . "reponse (date_reelle, id, date, auteur, mail, texte) values (now(), '$id', '$date', '$auteur', '$adresse', '$texte')" ;
-            @mysql_query($my) ;
+            @mysql_query("insert into " . $prefixe_de_table . "reponse (date_reelle, id, date, auteur, mail, texte) values (now(), '$id', '$date', '$auteur', '$adresse', '$texte')") ;
         }
         else
         {
@@ -226,13 +324,11 @@ else
     if (isset($HTTP_GET_VARS["repondre"]))
     {
         // Met à jour sa date réelle
-        $my = "UPDATE " . $prefixe_de_table . "question SET date_reelle=now() WHERE id='" . $HTTP_GET_VARS["id"] . "' ";
-        @mysql_query($my) ;
+        @mysql_query("UPDATE " . $prefixe_de_table . "question SET date_reelle=now() WHERE id='" . $HTTP_GET_VARS["id"] . "' ") ;
 
-        $my = "select * from " . $prefixe_de_table . "question where id like '" . $HTTP_GET_VARS["id"] . "' " ;
-        $res = @mysql_query($my) ;
+        $res = @mysql_query("select * from " . $prefixe_de_table . "question where id like '" . $HTTP_GET_VARS["id"] . "' ") ;
 
-        echo "<table width='76%' border='0' align='center'>" ;
+        echo "<table width='$width' border='0' align='center'>" ;
 
         while ($row = @mysql_fetch_array($res))
         {
@@ -254,8 +350,7 @@ else
             echo "</td></tr>" ;
         }
 
-        $my_2 = "select * from " . $prefixe_de_table . "reponse where id like '" . $HTTP_GET_VARS["id"] . "'" ;
-        $res2 = @mysql_query($my_2);
+        $res2 = @mysql_query("select * from " . $prefixe_de_table . "reponse where id like '" . $HTTP_GET_VARS["id"] . "'");
 
         $color1 = "ligneRéponseDevellopeImpaire" ;
         $color2 = "ligneRéponseDevellopePaire" ;
@@ -295,14 +390,15 @@ else
              " name='adresse' value='" . htmlentities($HTTP_COOKIE_VARS["email"]).
              "'></td></tr><tr>" ;
         echo "<td colspan='2' align='center'><b>D&eacute;velopper votre r&eacute;ponse ci-dessous :</b></td></tr><tr align='center'>" ;
-        echo "<td colspan='2'><textarea cols='60' rows='17' name='texte'>" .
+        echo "<td colspan='2'><textarea cols='60' rows='17' name='texte' wrap='PHYSICAL'>" .
              htmlentities($HTTP_POST_VARS["texte"]) . "</textarea></td></tr></table><br>" ;
 
-        if ($can_send_email)
+        if ($can_send_email == true)
         {
-            echo "<input name='invisible' type='checkbox'> Ne pas rendre mon adresse e-mail publique.<br>" ;
+            echo "<input type='checkbox' name='envoi_mel'> Je souhaite recevoir un e-mail pour chaque r&eacute;ponses<br>" ;
         }
 
+        echo "<input name='invisible' type='checkbox'> Ne pas rendre mon adresse e-mail publique.<br>" ;
         echo "<br><input type='submit' value='Poster le sujet' name='quest_reponse'>&nbsp;" ;
         echo "<input type='hidden' name='x' value='" . htmlentities($x) . "'><input type='submit' value='Retour au forum'>" ;
         echo "<hr width='50%'>" ;
@@ -340,8 +436,7 @@ else
                 $adresse = "@" . $adresse ;
             }
 
-            $my = "insert into " . $prefixe_de_table . "question (date_reelle, id, date, sujet, auteur, mail, texte, envoi) values (now(),'$id','$date','$sujet','$auteur','$adresse','$texte','$envoi')";
-            @mysql_query($my) ;
+            @mysql_query("insert into " . $prefixe_de_table . "question (date_reelle, id, date, sujet, auteur, mail, texte, envoi) values (now(),'$id','$date','$sujet','$auteur','$adresse','$texte','$envoi')") ;
         }
         else
         {
@@ -352,7 +447,7 @@ else
     }
 
     /*
-     * Affiche le formulaire
+     * Affiche le formulaire pour ajouter un message
      */
     if (isset($HTTP_GET_VARS['newpost']))
     {
@@ -367,15 +462,15 @@ else
              " name='adresse' value='" . htmlentities($HTTP_COOKIE_VARS["email"]).
              "'></td></tr><tr>" ;
         echo "<td colspan='2'><b>D&eacute;velopper votre question ci-dessous : </b></td></tr><tr>" ;
-        echo "<td colspan='2'><textarea cols='50' rows='15' name='texte'>" .
+        echo "<td colspan='2'><textarea cols='50' rows='15' name='texte' wrap='PHYSICAL'>" .
              htmlentities($HTTP_POST_VARS["texte"]) . "</textarea></td></tr></table><br>" ;
 
-        if ($can_send_email)
+        if ($can_send_email == true)
         {
             echo "<input type='checkbox' name='envoi_mel'> Je souhaite recevoir un e-mail pour chaque r&eacute;ponses<br>" ;
-            echo "<input name='invisible' type='checkbox'> Ne pas rendre mon adresse e-mail publique.<br><br>" ;
         }
 
+        echo "<input name='invisible' type='checkbox'> Ne pas rendre mon adresse e-mail publique.<br><br>" ;
         echo "<input type='hidden' name='x' value='" . htmlentities($x) . "'><input type='submit' value='Poster' name='poster'>&nbsp;" ;
         echo "<input type='submit' value='Annuler'>" ;
         echo "<hr width='50%'>" ;
@@ -386,8 +481,7 @@ else
      */
      if (!isset($HTTP_GET_VARS["repondre"]) && !isset($HTTP_GET_VARS['newpost']))
      {
-        $my_num = "select * from " . $prefixe_de_table . "question order by date desc" ;
-        $res1 = @mysql_query($my_num) ;
+        $res1 = @mysql_query("select * from " . $prefixe_de_table . "question") ;
 
         $tot = @mysql_num_rows($res1) ;
         @mysql_free_result($res1) ;
@@ -421,10 +515,27 @@ else
             $page_tot = $page_tot ;
         }
 
-        echo "</center><b>Il y a $tot $question sur $page_tot $page_ecran.</b><br><br><center>" ;
-
+        echo "</center><table cellspacing='2' cellpadding='1' border='0' width='100%'><tr><td><b>Il y a $tot $question sur $page_tot $page_ecran.</b>" ;
+        ?>
+        </td><td align="right">
+        Classer par
+        <select name="classement">
+          <option value="0" <?php echo ($HTTP_POST_VARS["classement"] == 0) ? "selected" : "" ; ?>>Date de post </option>
+          <option value="1" <?php echo ($HTTP_POST_VARS["classement"] == 1) ? "selected" : "" ; ?>>Auteur</option>
+          <option value="2" <?php echo ($HTTP_POST_VARS["classement"] == 2) ? "selected" : "" ; ?>>Titre</option>
+          <option value="3" <?php echo ($HTTP_POST_VARS["classement"] == 3) ? "selected" : "" ; ?>>Date de derni&egrave;re lecture/r&eacute;ponse</option>
+        </select>
+        par ordre
+        <select name="sens">
+          <option value="0" <?php echo ($HTTP_POST_VARS["sens"] == 0) ? "selected" : "" ; ?>>Croissant</option>
+          <option value="1" <?php echo ($HTTP_POST_VARS["sens"] == 1) ? "selected" : "" ; ?>>D&eacute;croissant</option>
+        </select>
+        <input type="submit" value="Trier" name="trier">
+        </td></tr>
+        <tr><td colspan="2">&nbsp;</td></tr></table>
+        <?php
         // interoge la table question ....
-        echo "<table cellspacing='2' cellpadding='1' border='0' width='76%'>" ;
+        echo "<table cellspacing='2' cellpadding='1' border='0' width='$width' align='center'>" ;
 
         $color1 = "ligneTitreMessageImpaire" ;
         $color2 = "ligneTitreMessagePaire" ;
@@ -466,22 +577,42 @@ else
             $x = $HTTP_POST_VARS["direct"] ;
         }
 
-
-        $my_1 = "select * from " . $prefixe_de_table . "question order by date_reelle desc limit $x, $nb_post_par_page" ;
-        $res1 = @mysql_query($my_1);
+        $res1 = @mysql_query("select * from " . $prefixe_de_table . "question order by $classement $sens limit $x, $nb_post_par_page");
 
         while ($row = @mysql_fetch_array($res1))
         {
             $id = $row["id"] ;
 
-            //interroge la table réponse sur le nombre de réponses...
-            echo "<tr class='$coul'><td>$row[date] :&nbsp;</td>" ;
-            echo "<td><a href='". $url_site . $SCRIPTNAME . "?repondre=1&id=". urlencode($row["id"]) . "&x=$x'> " . htmlentities($row["sujet"]) . "....</a></td>" ;
-            echo "<td nowrap align='right'>auteur : " . htmlentities($row["auteur"]) . "</td>" ;
-
-            $my_2 = "select * from " . $prefixe_de_table . "reponse where id='$id'" ;
-            $res2 = @mysql_query($my_2) ;
+            // interroge la table réponse sur le nombre de réponses...
+            $res2 = @mysql_query("select * from " . $prefixe_de_table . "reponse where id='$id'") ;
             $rep = @mysql_num_rows($res2) ;
+
+            if ($afficher_icone == true)
+            {
+                if ($rep >= $nb_rep_pr_msg_hot)
+                {
+                    $image = "message-hot.gif" ;
+                }
+                else if ($rep == 0)
+                {
+                    $image = "message-nouveau.gif" ;
+                }
+                else
+                {
+                    $image = "message.gif" ;
+                }
+
+                $image = "<img alt='' src='" . $url_site . "images/" . $image . "'>&nbsp;" ;
+            }
+            else
+            {
+                $image = "" ;
+            }
+
+            echo "<tr class='$coul'><td>$image" . $row['date'] . " :&nbsp;</td>" ;
+
+            echo "<td><a href='". $url_site . $SCRIPTNAME . "?repondre=1&id=". urlencode($row["id"]) . "&x=$x&sens=" . $HTTP_POST_VARS["sens"] . "&classement=" . $HTTP_POST_VARS["classement"] . "'> " . htmlentities($row["sujet"]) . "</a></td>" ;
+            echo "<td nowrap align='right'>auteur : " . htmlentities($row["auteur"]) . "</td>" ;
 
             if ($coul == $color1)
             {
@@ -537,8 +668,7 @@ else
             }
         }
 
-        echo "</table><br><br>" ;
-        echo "<table border='0' cellspacing='0' cellpadding='2'><tr><td valign='top'>" ;
+        echo "</table><br><table border='0' cellspacing='0' cellpadding='2' align='center'><tr><td valign='top'>" ;
 
         if ($x > 0)
         {
@@ -550,7 +680,8 @@ else
             echo "&nbsp;" ;
         }
 
-        echo "</td><td valign='top' align='center' nowrap>Page " . (ceil($x / $nb_post_par_page) + 1) . "/$page_tot" .
+        echo "</td><td valign='top' align='center' nowrap>Page " .
+             (ceil($x / $nb_post_par_page) + 1) . "/$page_tot" .
              "</td><td valign='top' align='right'>" ;
 
         if ((ceil($x / $nb_post_par_page) + 1) < $page_tot)
@@ -565,7 +696,7 @@ else
 
         echo "<input type='hidden' name='x' value='$x'><input type='hidden' name='total' value='$tot'>" ;
         echo "</td></tr><tr><td colspan='3' align='center' nowrap>" ;
-        echo "&nbsp;<br>Allez directement &agrave; la page <select name='direct'>" ;
+        echo "Allez directement &agrave; la page <select name='direct'>" ;
 
         for ($i = 0; $i < $page_tot; $i++)
         {
@@ -574,9 +705,8 @@ else
 
         echo "</select>&nbsp;<input type='Submit' name='direct_valid' value='Go'>" ;
 
-        echo "</td></tr></table></form>" ;
-
-        echo "Power by [ <a href='http://php4php.free.fr/nfaq/'>NFAQ</a> ]</center>" ;
+        echo "</td></tr><tr><td align='center' colspan='3'><br>Power by [ <a href='http://php4php.free.fr/nfaq/'>NFAQ</a> ]</td></tr></table></form>" ;
     }
+
+echo "</body></html>" ;
 ?>
-</body></html>

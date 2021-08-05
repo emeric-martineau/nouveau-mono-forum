@@ -14,13 +14,13 @@ A:hover {
 	TEXT-DECORATION: underline;
 }
 INPUT {
-    FONT-SIZE: 10px; FONT-FAMILY: Arial,Helvetica;
+    FONT-SIZE: 12px; FONT-FAMILY: Arial,Helvetica;
 }
 SELECT {
-    FONT-SIZE: 10px; FONT-FAMILY: Arial,Helvetica;
+    FONT-SIZE: 12px; FONT-FAMILY: Arial,Helvetica;
 }
 textarea {
-    FONT-SIZE: 10px;
+    FONT-SIZE: 14px;
     FONT-FAMILY: Arial,Helvetica;
     WIDTH:100%;
 }

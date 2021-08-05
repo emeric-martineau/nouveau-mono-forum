@@ -4,11 +4,11 @@
  *
  * Nouvelle foire aux question.
  *
- * Version 1.0
+ * Version 1.2
  *
  * Voici un forum qui ne tient que sur un seul fichier. Ultra rapide, simple a 
  * mettre en place. Les urls sont cliquables, la personne qui pose une question
- * peut recevoir directement un mel pour chaque reponse. Les message sont
+ * peut recevoir directement un e-mail pour chaque reponse. Les messages sont
  * nettoyer tous les X jours. Vous avez besoin d'une base Mysql. On peut déposer
  * du code php sans risque.
  *
@@ -33,17 +33,18 @@
 //$SCRIPTNAME = basename(getenv("SCRIPT_NAME")) ;
 
 // Définit si on peut envoyer des e-mail
-if (strpos(get_cfg_var("disable_functions"), "mail"))
+if (is_integer(strpos(get_cfg_var("disable_functions"), "mail")))
 {
-    $afficher_reponse_dans_liste = false ;
+    $can_send_email = false ;
 }
 else
 {
-    $afficher_reponse_dans_liste = true ;
+    $can_send_email = true ;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Créer un lien
+// ATTENTION : converti le reste de la chaine en HTML !
 function lien_cliquable($chaine)
 {
     // rend cliquable un lien dans le sujet...
@@ -90,6 +91,11 @@ function BBCode($chaine)
     for ($i = 0; $i < $nb_bbcode; $i++)
     {
         $chaine = str_replace($bbcode[$i][0], $bbcode[$i][1], $chaine) ;
+
+        // Converti \n en <br>
+        // On ne peut plus utiliser nl2br car depuis PHP version 4.0.5 il est
+        // compatible XHTML
+        $chaine = str_replace("\n", "<br>", $chaine) ;
     }
 
     return $chaine ;

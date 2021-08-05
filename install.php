@@ -4,7 +4,7 @@
  *
  * Nouvelle foire aux question.
  *
- * Version 1.0
+ * Version 1.2
  *
  * Voici un forum qui ne tient que sur un seul fichier. Ultra rapide, simple a 
  * mettre en place. Les urls sont cliquables, la personne qui pose une question

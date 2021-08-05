@@ -63,7 +63,9 @@ de votre h&eacute;bergeur de site web.<br>
   <tr> 
     <td>$nb_jour_avant_suppression </td>
     <td>60</td>
-    <td>nombre de jours sans lecture d'une question avant quelle soit supprim&eacute;e</td>
+    <td>nombre de jours sans lecture d'une question avant quelle soit supprim&eacute;e. 
+      Si la valeur est supp&eacute;rieur &agrave; 0, alors les messages sont supprim&eacute;s, 
+      sinon, les messages ne sont pas supprim&eacute;s.</td>
   </tr>
   <tr> 
     <td>$titre_forum </td>
@@ -101,11 +103,28 @@ de votre h&eacute;bergeur de site web.<br>
       que NFAQ cherche s'il est possible d'envoyer des e-mail. Si ce n'est pas 
       le cas, l'envoie est automatiquement d&eacute;sactiv&eacute;.</td>
   </tr>
-  <tr>
+  <tr> 
     <td>$SCRIPTNAME</td>
     <td>&quot;forum.php&quot;</td>
     <td>Nom du fichier affichant le forum. Ici (et par d&eacute;faut), il sagit 
       du fichier forum.php</td>
+  </tr>
+  <tr> 
+    <td>$afficher_icone</td>
+    <td>true</td>
+    <td>Indique s'il faut afficher les ic&ocirc;nes en face des messages (nouveau, 
+      message avec r&eacute;ponse, message populaire)</td>
+  </tr>
+  <tr> 
+    <td>$nb_rep_pr_msg_hot</td>
+    <td>25</td>
+    <td>Indique le nombre de r&eacute;ponses n&eacute;cessaire pour qu'un message 
+      devienne populaire</td>
+  </tr>
+  <tr> 
+    <td>$width</td>
+    <td>76%</td>
+    <td>Indique la largeur d'affichage</td>
   </tr>
   <tr> 
     <td>$smiley[] </td>
@@ -127,7 +146,7 @@ de votre h&eacute;bergeur de site web.<br>
     <td>$texte_a_inserer</td>
     <td> &quot;**censure**&quot;</td>
     <td>Texte rempla&ccedil;ant les mots censur&eacute;s</td>
-  </tr>  
+  </tr>
 </table>
 <br>
 <h1>4 - Installation (2&egrave;me partie)</h1>
@@ -137,10 +156,44 @@ Vous devez acc&egrave;per la licence. Ensuite entrer le login et mot de passe
 que vous avez entr&eacute; dans le fichier de configuration. La cr&eacute;ation 
 des tables s'effectue automatiquement.<br>
 <br>
+<h1>5 - Personnalisation du site</h1>
+Pour changer la couleur de NFAQ, rien de plus simple, tout se trouve dans un fichier 
+CSS. Voici la signification des classes :<br>
+<br>
+<table border="0" cellspacing="2" cellpadding="0">
+  <tr> 
+    <td>.ligneTitreMessageImpaire</td>
+    <td>Ligne impaire dans la liste des messages du forum.</td>
+  </tr>
+  <tr> 
+    <td>.ligneTitreMessagePaire</td>
+    <td>Ligne paire dans la liste des messages du forum.</td>
+  </tr>
+  <tr> 
+    <td>.ligneReponseMessageImpaire</td>
+    <td>Ligne impaire dans la liste des r&eacute;ponses affich&eacute;es dans 
+      la liste des messages du forum</td>
+  </tr>
+  <tr> 
+    <td>.ligneReponseMessagePaire</td>
+    <td>Ligne paire dans la liste des r&eacute;ponses affich&eacute;es dans la 
+      liste des messages du forum</td>
+  </tr>
+  <tr> 
+    <td>.ligneSujetMessage</td>
+    <td>Ligne contenant le titre de la question d&eacute;velopp&eacute;e</td>
+  </tr>
+  <tr>
+    <td>.ligneR&eacute;ponseDevellopeImpaire</td>
+    <td>Ligne impaire de la r&eacute;ponse dans la question d&eacute;velopp&eacute;</td>
+  </tr>
+  <tr> 
+    <td>.ligneR&eacute;ponseDevellopePaire</td>
+    <td>Ligne paire de la r&eacute;ponse dans la question d&eacute;velopp&eacute;</td>
+  </tr>
+</table>
 <br>
 <br>
-<br>
-  <br>
-
+NFAQ version 1.2 (14/11/2003)<br>
 </body>
 </html>
